@@ -21,22 +21,22 @@ classifiers = [
 
 [tool.poetry.dependencies]
 beautifulsoup4 = "<5,>=4.10.0"
-packaging = "<25,>=23.1"
+packaging = "<25,>=23.2"
 pip = "<25,>=23.2"
 python = "<4,>=3.10"
 python-dateutil = "<3,>=2.7.0"
 requests = "<3,>=2.30.0"
 tomlkit = "<0.14,>=0.11.0"
-typing-extensions = "<5,>=4.7.0"
+typing-extensions = "<5,>=4.8.0"
 virtualenv = "<21,>=20.24.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "<24.9,>=24.8"
 isort = "<5.14,>=5.13"
 mypy = "<1.12,>=1.11"
-pylint = "<3.3,>=3.2"
+pylint = "<3.4,>=3.3"
 pytest = "<8.4,>=8.3"
-pytest-asyncio = "<0.23.9,>=0.23.8"
+pytest-asyncio = "<0.24.1,>=0.24.0"
 taskipy = "<1.14,>=1.13"
 types-beautifulsoup4 = "<5,>=4.10"
 types-python-dateutil = "<3,>=0.1.0"
