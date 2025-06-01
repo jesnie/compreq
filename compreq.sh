@@ -11,10 +11,10 @@ if ! git checkout -b ${branch}; then
     git branch -D ${branch}
     git checkout -b ${branch}
 fi
-poetry run python -m requirements
-poetry run task format
+uv run python -m requirements
+uv run task format
 if [[ $(git status --porcelain) ]]; then
-    poetry update
+    uv lock --upgrade
     git \
         -c "user.name=Update requirements bot" \
         -c "user.email=none" \

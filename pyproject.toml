@@ -1,11 +1,14 @@
-[tool.poetry]
+[project]
 name = "compreq"
+requires-python = "<4,>=3.10"
 version = "0.1.0"
 description = "A library for dynamically computing Python requirements, to keep them up-to-date."
-authors = ["Jesper Nielsen <jespernielsen1982+compreq@gmail.com>"]
+authors = [
+    { name = "Jesper Nielsen", email = "jespernielsen1982+compreq@gmail.com" }
+]
+
 license = "MIT"
 readme = "README.md"
-
 homepage = "https://github.com/jesnie/compreq"
 repository = "https://github.com/jesnie/compreq"
 
@@ -20,32 +23,34 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 
-[tool.poetry.dependencies]
-beautifulsoup4 = "<5,>=4.11.0"
-packaging = "<26,>=24.0"
-pip = "<26,>=24.0"
-python = "<4,>=3.10"
-python-dateutil = "<3,>=2.7.0"
-requests = "<3,>=2.30.0"
-tomlkit = "<0.14,>=0.11.0"
-typing-extensions = "<5,>=4.11.0"
-virtualenv = "<21,>=20.26.0"
+dependencies = [
+    "beautifulsoup4<5,>=4.11.0",
+    "packaging<26,>=24.1",
+    "pip<26,>=24.1",
+    "python-dateutil<3,>=2.7.0",
+    "requests<3,>=2.30.0",
+    "tomlkit<0.14,>=0.11.0",
+    "typing-extensions<5,>=4.12.0",
+    "virtualenv<21,>=20.26.0",
+]
 
-[tool.poetry.group.dev.dependencies]
-black = "<25.2,>=25.1"
-isort = "<6.1,>=6.0"
-mypy = "<1.16,>=1.15"
-pylint = "<3.4,>=3.3"
-pytest = "<8.4,>=8.3"
-pytest-asyncio = "<1.1,>=1.0"
-taskipy = "<1.15,>=1.14"
-types-beautifulsoup4 = "<5,>=4.10"
-types-python-dateutil = "<3,>=0.1.0"
-types-requests = "<3,>=2.30"
+[dependency-groups]
+dev = [
+    "black<25.2,>=25.1",
+    "isort<6.1,>=6.0",
+    "mypy<1.18,>=1.17",
+    "pylint<3.4,>=3.3",
+    "pytest<8.5,>=8.4",
+    "pytest-asyncio<1.2,>=1.1",
+    "taskipy<1.15,>=1.14",
+    "types-beautifulsoup4<5,>=4.10",
+    "types-python-dateutil<3,>=0.1.0",
+    "types-requests<3,>=2.30",
+]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.isort]
 py_version = 310
