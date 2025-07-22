@@ -13,7 +13,7 @@ from compreq.lazy import (
 
 class VersionToken:
     """
-    Factory for creating version specifiers. See: `compreq.version`.
+    Factory for creating version specifiers. See: `compreq.lazy`.
     """
 
     def require(self, op: AnySpecifierOperator, version: AnyVersion) -> LazySpecifier:

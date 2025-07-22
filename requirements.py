@@ -18,12 +18,13 @@ def set_python_version_in_github_actions(comp_req: cr.CompReq) -> None:
             ref.sub(r"(^ +matrix:\s^ +python: \[).*(\]$)", rf"\g<1>{minor_versions_str}\g<2>")
 
 
-def set_python_version(comp_req: cr.CompReq, pyproject: cr.PoetryPyprojectFile) -> cr.CompReq:
+def set_python_version(comp_req: cr.CompReq, pyproject: cr.PyprojectFile) -> cr.CompReq:
     comp_req = comp_req.for_python(
         cr.version("<", cr.ceil_ver(cr.MAJOR, cr.max_ver()))
         & cr.version(">=", cr.floor_ver(cr.MINOR, cr.max_ver(cr.min_age(years=3))))
     )
 
+    pyproject.set_requires_python(comp_req, cr.python_specifier())
     pyproject.set_python_classifiers(comp_req)
     set_python_version_in_github_actions(comp_req)
     version = comp_req.resolve_version("python", cr.default_python())
@@ -37,10 +38,8 @@ def set_python_version(comp_req: cr.CompReq, pyproject: cr.PoetryPyprojectFile) 
 
 
 def main() -> None:
-    with cr.PoetryPyprojectFile.open() as pyproject:
-        prev_python_specifier = cr.get_bounds(
-            pyproject.get_requirements()["python"].specifier
-        ).lower_specifier_set()
+    with cr.PyprojectFile.open() as pyproject:
+        prev_python_specifier = cr.get_bounds(pyproject.get_requires_python()).lower_specifier_set()
         comp_req = cr.CompReq(python_specifier=prev_python_specifier)
         comp_req = set_python_version(comp_req, pyproject)
 
@@ -65,7 +64,6 @@ def main() -> None:
                     cr.dist("beautifulsoup4") & default_range,
                     cr.dist("packaging") & default_range,
                     cr.dist("pip") & default_range,
-                    cr.dist("python") & cr.python_specifier(),
                     cr.dist("python-dateutil") & default_range,
                     cr.dist("requests") & default_range,
                     cr.dist("tomlkit") & default_range,

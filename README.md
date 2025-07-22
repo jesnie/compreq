@@ -23,7 +23,7 @@ and setting the requirments in them.
 ```python
 import compreq as cr
 
-with cr.PoetryPyprojectFile.open() as pyproject:
+with cr.PyprojectFile.open() as pyproject:
     prev_python_specifier = cr.get_bounds(
         pyproject.get_requirements()["python"].specifier
     ).lower_specifier_set()
