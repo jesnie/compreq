@@ -58,5 +58,5 @@ jobs:
           python-version: "3.10"
       - run: curl -LsSf https://astral.sh/uv/install.sh | sh
       - run: uv run --locked --no-editable python set_version.py "${{github.ref_name}}"
-      - run: uv run python -m build
+      - run: uv build
       - uses: pypa/gh-action-pypi-publish@release/v1
