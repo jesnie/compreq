@@ -13,8 +13,8 @@ def test_pythonftp(monkeypatch: pytest.MonkeyPatch) -> None:
                 ("a/a1.txt", utc(dt.datetime(2023, 8, 22, 15, 1)), b"a1 contents"),
                 ("a/a2.txt", utc(dt.datetime(2023, 8, 22, 15, 2)), b"a2 contents"),
                 ("b.txt", utc(dt.datetime(2023, 8, 22, 15, 3)), b"b contents"),
-            ]
-        )
+            ],
+        ),
     )
 
     monkeypatch.setattr("compreq.pythonftp.requests.get", fake_requests_get)
@@ -37,8 +37,8 @@ def test_pythonftp(monkeypatch: pytest.MonkeyPatch) -> None:
     assert a1.url == "https://www.python.org/ftp/a/a1.txt"
     with pytest.raises(AssertionError):
         a1.as_dir()
-    assert "a1 contents" == a1.read_text()
-    assert b"a1 contents" == a1.read_bytes()
+    assert a1.read_text() == "a1 contents"
+    assert a1.read_bytes() == b"a1 contents"
 
     a2 = a_ls["a2.txt"].as_file()
     assert a2.path_str == "/a/a2.txt"
@@ -46,8 +46,8 @@ def test_pythonftp(monkeypatch: pytest.MonkeyPatch) -> None:
     assert a2.url == "https://www.python.org/ftp/a/a2.txt"
     with pytest.raises(AssertionError):
         a2.as_dir()
-    assert "a2 contents" == a2.read_text()
-    assert b"a2 contents" == a2.read_bytes()
+    assert a2.read_text() == "a2 contents"
+    assert a2.read_bytes() == b"a2 contents"
 
     b = root_ls["b.txt"].as_file()
     assert b.path_str == "/b.txt"
@@ -55,5 +55,5 @@ def test_pythonftp(monkeypatch: pytest.MonkeyPatch) -> None:
     assert b.url == "https://www.python.org/ftp/b.txt"
     with pytest.raises(AssertionError):
         b.as_dir()
-    assert "b contents" == b.read_text()
-    assert b"b contents" == b.read_bytes()
+    assert b.read_text() == "b contents"
+    assert b.read_bytes() == b"b contents"

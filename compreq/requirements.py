@@ -14,9 +14,7 @@ _UNSET = _Unset(object())
 
 @dataclass(order=True, frozen=True)
 class OptionalRequirement:
-    """
-    Extension of `Requirement` to support being optional.
-    """
+    """Extension of `Requirement` to support being optional."""
 
     requirement: Requirement
     optional: bool
@@ -113,8 +111,7 @@ def make_requirement(
 
 @dataclass(frozen=True)
 class RequirementSet(Mapping[str, OptionalRequirement]):
-    """
-    A set of requirements.
+    """A set of requirements.
 
     Despite the name this functions more like a mapping from distribution name to the requirements
     for that distribution.

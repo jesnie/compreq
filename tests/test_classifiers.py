@@ -23,17 +23,7 @@ def test_set_python_classifiers() -> None:
     lazy_python_releases = get_lazy_release_set(python_releases)
     cr.resolve_release_set.return_value = python_releases
 
-    assert [
-        "Development Status :: 4 - Beta",
-        "Intended Audience :: Developers",
-        "Typing :: Typed",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.6",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.0",
-        "Programming Language :: Python :: 3.1",
-    ] == set_python_classifiers(
+    assert set_python_classifiers(
         [
             "Development Status :: 4 - Beta",
             "Intended Audience :: Developers",
@@ -44,5 +34,15 @@ def test_set_python_classifiers() -> None:
         ],
         cr,
         lazy_python_releases,
-    )
+    ) == [
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "Typing :: Typed",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.0",
+        "Programming Language :: Python :: 3.1",
+    ]
     cr.resolve_release_set.assert_called_once_with("python", lazy_python_releases)

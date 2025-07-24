@@ -21,8 +21,7 @@ from compreq.rounding import ceil
 
 
 class PoetryPyprojectFile(PyprojectFile):
-    """
-    Wrapper around a `pyproject.toml` using Poetry.
+    """Wrapper around a `pyproject.toml` using Poetry.
 
     Usage::
 
@@ -30,13 +29,17 @@ class PoetryPyprojectFile(PyprojectFile):
             pyproject.set_requirements(...)
     """
 
-    def get_requirements(self, group: str | None = None) -> RequirementSet:
+    def get_requirements(
+        self, *, group: str | None = None, extra: str | None = None
+    ) -> RequirementSet:
         """
-        Get the given `group` of requirements. If `group` is `None` the main group is returned.
+        Get the given `group` or `extra` of requirements.
+
+        If `group` and `extra` is `None` the main group is returned.
         """
         return get_requirement_set(
             self._parse_requirement(distribution, toml)
-            for distribution, toml in self._get_dependencies(group).items()
+            for distribution, toml in self._get_dependencies(group, extra).items()
         )
 
     def _parse_requirement(self, distribution: str, toml: Any) -> OptionalRequirement:
@@ -77,9 +80,7 @@ class PoetryPyprojectFile(PyprojectFile):
                 result &= SpecifierSet(f"<{upper},>={version}")
             elif specifier.startswith("~"):
                 result &= SpecifierSet(f"~={specifier[1:]}")
-            elif (
-                specifier.startswith("<") or specifier.startswith(">") or specifier.startswith("!=")
-            ):
+            elif specifier.startswith(("<", ">", "!=")):
                 result &= SpecifierSet(specifier)
             else:
                 result &= SpecifierSet(f"=={specifier}")
@@ -89,13 +90,17 @@ class PoetryPyprojectFile(PyprojectFile):
         self,
         cr: CompReq,
         requirement_set: AnyRequirementSet,
+        *,
         group: str | None = None,
+        extra: str | None = None,
     ) -> None:
         """
-        Set the given `group` of requirements. If `group` is `None` the main group is set.
+        Set the given `group` or `extra` of requirements.
+
+        If `group` and `extra` is `None` the main group is returned.
         """
         requirements = cr.resolve_requirement_set(requirement_set)
-        requirements_toml = self._get_dependencies(group)
+        requirements_toml = self._get_dependencies(group, extra)
         requirements_toml.clear()
         for r in requirements.values():
             requirements_toml[r.name] = self._format_requirement(r)
@@ -136,7 +141,10 @@ class PoetryPyprojectFile(PyprojectFile):
     def _get_poetry(self) -> Any:
         return self.toml["tool"]["poetry"]
 
-    def _get_dependencies(self, group: str | None) -> Any:
+    def _get_dependencies(self, group: str | None, extra: str | None) -> Any:
+        assert extra is None, (
+            "extra is currently not supported for Poetry. Instead, make the dependencies Optional."
+        )
         if group is None:
             return self._get_poetry()["dependencies"]
         else:
@@ -156,8 +164,7 @@ class PoetryPyprojectFile(PyprojectFile):
     def set_python_classifiers(
         self, cr: CompReq, python_releases: AnyReleaseSet | None = None
     ) -> None:
-        """
-        Replace python distribution classifiers (https://pypi.org/classifiers/) with those
+        """Replace python distribution classifiers (https://pypi.org/classifiers/) with those
         corresponding to `python_releases`.
         """
         self.set_classifiers(set_python_classifiers(self.get_classifiers(), cr, python_releases))

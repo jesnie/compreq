@@ -13,9 +13,7 @@ from compreq.time import UtcDatetime, is_utc_datetime, utc_now
 
 
 class DistributionContext(ABC):
-    """
-    A context for resolving values related to a given distribution.
-    """
+    """A context for resolving values related to a given distribution."""
 
     @property
     @abstractmethod
@@ -62,8 +60,7 @@ class Context(ABC):
     def for_python(
         self, python_specifier: SpecifierSet | str, *, default_python: Version | str | None = None
     ) -> Context:
-        """
-        Create a new context, for the given versions of Python.
+        """Create a new context, for the given versions of Python.
 
         If `default_python` is `None`, the lower bound on `python_specifier` is used.
         """

@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import re
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Callable
 
 from typing_extensions import Self
 
@@ -12,8 +11,7 @@ from compreq.paths import AnyPath
 
 
 class TextReFile:
-    """
-    Wrapper around a generic text file.
+    """Wrapper around a generic text file.
 
     Usage::
 
@@ -41,15 +39,15 @@ class TextReFile:
         self,
         pattern: str | re.Pattern[str],
         repl: str | Callable[[re.Match[str]], str],
+        *,
         count: int = 0,
         flags: int = re.MULTILINE,
     ) -> int:
-        """
-        Regular expression substitute all occurences of `pattern` with `repl` in this file.
+        """Regular expression substitute all occurences of `pattern` with `repl` in this file.
 
         See the python documentation on `re.sub` for more details.
         """
-        self.contents, result = re.subn(pattern, repl, self.contents, count, flags)
+        self.contents, result = re.subn(pattern, repl, self.contents, count=count, flags=flags)
         return result
 
     def __str__(self) -> str:

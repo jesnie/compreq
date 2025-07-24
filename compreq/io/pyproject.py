@@ -20,8 +20,7 @@ from compreq.roots import CompReq
 
 
 class PyprojectFile:
-    """
-    Wrapper around a generic `pyproject.toml`.
+    """Wrapper around a generic `pyproject.toml`.
 
     Usage::
 
@@ -48,24 +47,32 @@ class PyprojectFile:
     def __str__(self) -> str:
         return dumps(self.toml)
 
-    def get_requirements(self, group: str | None = None) -> RequirementSet:
+    def get_requirements(
+        self, *, group: str | None = None, extra: str | None = None
+    ) -> RequirementSet:
         """
-        Get the given `group` of requirements. If `group` is `None` the main group is returned.
+        Get the given `group` or `extra` of requirements.
+
+        If `group` and `extra` is `None` the main group is returned.
         """
-        return get_requirement_set(self._get_dependencies(group))
+        return get_requirement_set(self._get_dependencies(group, extra))
 
     def set_requirements(
         self,
         cr: CompReq,
         requirement_set: AnyRequirementSet,
+        *,
         group: str | None = None,
+        extra: str | None = None,
     ) -> None:
         """
-        Set the given `group` of requirements. If `group` is `None` the main group is set.
+        Set the given `group` or `extra` of requirements.
+
+        If `group` and `extra` is `None` the main group is returned.
         """
         requirements = list(cr.resolve_requirement_set(requirement_set).values())
         assert not any(r.optional for r in requirements)
-        requirements_toml = self._get_dependencies(group)
+        requirements_toml = self._get_dependencies(group, extra)
         requirements_toml.clear()
         requirements_toml.extend(str(r.requirement) for r in requirements)
         requirements_toml.multiline(True)
@@ -73,11 +80,14 @@ class PyprojectFile:
     def _get_project(self) -> Any:
         return self.toml["project"]
 
-    def _get_dependencies(self, group: str | None) -> Any:
-        if group is None:
-            return self._get_project()["dependencies"]
-        else:
+    def _get_dependencies(self, group: str | None, extra: str | None) -> Any:
+        assert (group is None) or (extra is None), (group, extra)
+        if group is not None:
             return self.toml["dependency-groups"][group]
+        elif extra is not None:
+            return self._get_project()["optional-dependencies"][extra]
+        else:
+            return self._get_project()["dependencies"]
 
     def get_requires_python(self) -> SpecifierSet:
         """Read the `project.requires_python` field."""
@@ -101,8 +111,7 @@ class PyprojectFile:
     def set_python_classifiers(
         self, cr: CompReq, python_releases: AnyReleaseSet | None = None
     ) -> None:
-        """
-        Replace python distribution classifiers (https://pypi.org/classifiers/) with those
+        """Replace python distribution classifiers (https://pypi.org/classifiers/) with those
         corresponding to `python_releases`.
         """
         self.set_classifiers(set_python_classifiers(self.get_classifiers(), cr, python_releases))

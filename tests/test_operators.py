@@ -147,7 +147,7 @@ async def test_min_ver(releases: Collection[str], expected: str) -> None:
     context = MagicMock(cr.DistributionContext)
     context.distribution = "foo.bar"
     min_ver = cr.min_ver(release_set)
-    assert "foo.bar" == min_ver.get_distribution()
+    assert min_ver.get_distribution() == "foo.bar"
     assert fake_release(version=expected) == await min_ver.resolve(context)
 
 
@@ -166,7 +166,7 @@ async def test_max_ver(releases: Collection[str], expected: str) -> None:
     context = MagicMock(cr.DistributionContext)
     context.distribution = "foo.bar"
     max_ver = cr.max_ver(release_set)
-    assert "foo.bar" == max_ver.get_distribution()
+    assert max_ver.get_distribution() == "foo.bar"
     assert fake_release(version=expected) == await max_ver.resolve(context)
 
 
@@ -236,7 +236,10 @@ async def test_maximum_ver(versions: Sequence[str], expected: str) -> None:
     ],
 )
 async def test_ceil_ver(
-    level: cr.Level, version: str, keep_trailing_zeros: bool, expected: str
+    level: cr.Level,
+    version: str,
+    keep_trailing_zeros: bool,
+    expected: str,
 ) -> None:
     context = MagicMock(cr.DistributionContext)
     ceil_ver = cr.ceil_ver(level, version, keep_trailing_zeros)
@@ -281,7 +284,10 @@ async def test_ceil_ver(
     ],
 )
 async def test_floor_ver(
-    level: cr.Level, version: str, keep_trailing_zeros: bool, expected: str
+    level: cr.Level,
+    version: str,
+    keep_trailing_zeros: bool,
+    expected: str,
 ) -> None:
     context = MagicMock(cr.DistributionContext)
     floor_ver = cr.floor_ver(level, version, keep_trailing_zeros)
@@ -303,9 +309,12 @@ async def test_min_age() -> None:
     )
 
     min_age = cr.min_age(
-        release_set, now=utc(dt.datetime(2023, 8, 16, 16, 5, 0)), minutes=3, allow_empty=True
+        release_set,
+        now=utc(dt.datetime(2023, 8, 16, 16, 5, 0)),
+        minutes=3,
+        allow_empty=True,
     )
-    assert "foo.bar" == min_age.get_distribution()
+    assert min_age.get_distribution() == "foo.bar"
     assert fake_release_set(
         releases=[
             fake_release(version="1.0.0", released_time=dt.datetime(2023, 8, 16, 16, 0, 0)),
@@ -333,7 +342,7 @@ async def test_min_age__context_now() -> None:
     )
 
     min_age = cr.min_age(release_set, minutes=3, allow_empty=True)
-    assert "foo.bar" == min_age.get_distribution()
+    assert min_age.get_distribution() == "foo.bar"
     assert fake_release_set(
         releases=[
             fake_release(version="1.0.0", released_time=dt.datetime(2023, 8, 16, 16, 0, 0)),
@@ -358,9 +367,12 @@ async def test_min_age__empty_allowed() -> None:
         infer_successors=False,
     )
     min_age = cr.min_age(
-        release_set, now=utc(dt.datetime(2023, 8, 16, 16, 5, 0)), minutes=6, allow_empty=True
+        release_set,
+        now=utc(dt.datetime(2023, 8, 16, 16, 5, 0)),
+        minutes=6,
+        allow_empty=True,
     )
-    assert "foo.bar" == min_age.get_distribution()
+    assert min_age.get_distribution() == "foo.bar"
     assert fake_release_set(
         releases=[],
         infer_successors=False,
@@ -381,9 +393,12 @@ async def test_min_age__empty_not_allowed() -> None:
         infer_successors=False,
     )
     min_age = cr.min_age(
-        release_set, now=utc(dt.datetime(2023, 8, 16, 16, 5, 0)), minutes=6, allow_empty=False
+        release_set,
+        now=utc(dt.datetime(2023, 8, 16, 16, 5, 0)),
+        minutes=6,
+        allow_empty=False,
     )
-    assert "foo.bar" == min_age.get_distribution()
+    assert min_age.get_distribution() == "foo.bar"
     assert fake_release_set(
         releases=[
             fake_release(version="1.0.0", released_time=dt.datetime(2023, 8, 16, 16, 0, 0)),
@@ -406,9 +421,12 @@ async def test_max_age() -> None:
         infer_successors=False,
     )
     max_age = cr.max_age(
-        release_set, now=utc(dt.datetime(2023, 8, 16, 16, 5, 0)), minutes=3, allow_empty=True
+        release_set,
+        now=utc(dt.datetime(2023, 8, 16, 16, 5, 0)),
+        minutes=3,
+        allow_empty=True,
     )
-    assert "foo.bar" == max_age.get_distribution()
+    assert max_age.get_distribution() == "foo.bar"
     assert fake_release_set(
         releases=[
             fake_release(version="1.0.2", released_time=dt.datetime(2023, 8, 16, 16, 2, 0)),
@@ -434,7 +452,7 @@ async def test_max_age__context_now() -> None:
         infer_successors=False,
     )
     max_age = cr.max_age(release_set, minutes=3, allow_empty=True)
-    assert "foo.bar" == max_age.get_distribution()
+    assert max_age.get_distribution() == "foo.bar"
     assert fake_release_set(
         releases=[
             fake_release(version="1.0.2", released_time=dt.datetime(2023, 8, 16, 16, 2, 0)),
@@ -459,9 +477,12 @@ async def test_max_age__empty_allowed() -> None:
         infer_successors=False,
     )
     max_age = cr.max_age(
-        release_set, now=utc(dt.datetime(2023, 8, 16, 16, 10, 0)), minutes=3, allow_empty=True
+        release_set,
+        now=utc(dt.datetime(2023, 8, 16, 16, 10, 0)),
+        minutes=3,
+        allow_empty=True,
     )
-    assert "foo.bar" == max_age.get_distribution()
+    assert max_age.get_distribution() == "foo.bar"
     assert fake_release_set(
         releases=[],
         infer_successors=False,
@@ -482,9 +503,12 @@ async def test_max_age__empty_not_allowed() -> None:
         infer_successors=False,
     )
     max_age = cr.max_age(
-        release_set, now=utc(dt.datetime(2023, 8, 16, 16, 10, 0)), minutes=3, allow_empty=False
+        release_set,
+        now=utc(dt.datetime(2023, 8, 16, 16, 10, 0)),
+        minutes=3,
+        allow_empty=False,
     )
-    assert "foo.bar" == max_age.get_distribution()
+    assert max_age.get_distribution() == "foo.bar"
     assert fake_release_set(
         releases=[
             fake_release(version="1.0.4", released_time=dt.datetime(2023, 8, 16, 16, 4, 0)),
@@ -580,16 +604,19 @@ async def test_max_age__empty_not_allowed() -> None:
     ],
 )
 async def test_count(
-    level: cr.Level, n: int, releases: Collection[str], expected: Collection[str]
+    level: cr.Level,
+    n: int,
+    releases: Collection[str],
+    expected: Collection[str],
 ) -> None:
     release_set = fake_release_set(releases=releases, infer_successors=False)
     context = MagicMock(cr.DistributionContext)
     context.distribution = "foo.bar"
     count = cr.count(level, n, release_set)
 
-    assert "foo.bar" == count.get_distribution()
+    assert count.get_distribution() == "foo.bar"
     assert fake_release_set(releases=expected, infer_successors=False) == await count.resolve(
-        context
+        context,
     )
 
 
@@ -620,7 +647,8 @@ async def test_requirements(monkeypatch: MonkeyPatch) -> None:
     assert requirements == await lazy.resolve(context)
     context.for_distribution.assert_called_once_with("foo.bar")
     venv.install.assert_called_once_with(
-        cr.get_requirement_set([Requirement("foo.bar==1.2.3")]), deps=False
+        cr.get_requirement_set([Requirement("foo.bar==1.2.3")]),
+        deps=False,
     )
     venv.distribution_metadata.assert_called_once_with("foo.bar")
 
@@ -635,7 +663,7 @@ async def test_consistent_lower_bounds(monkeypatch: MonkeyPatch) -> None:
             Requirement("dist2[extra]>=2.0.0,!=2.1.1"),
             Requirement("dist3>1.0.0"),
             Requirement("dist4"),
-        ]
+        ],
     )
 
     def fake_distribution_metadata(distribution: str) -> cr.DistributionMetadata:
@@ -644,7 +672,7 @@ async def test_consistent_lower_bounds(monkeypatch: MonkeyPatch) -> None:
             {
                 "dist1": "1.2.0",
                 "dist2": "1.12.0",
-            }[distribution]
+            }[distribution],
         )
         return metadata
 
@@ -667,7 +695,7 @@ async def test_consistent_lower_bounds(monkeypatch: MonkeyPatch) -> None:
             Requirement("dist2[extra]>=1.12.0,!=2.1.1"),
             Requirement("dist3>1.0.0"),
             Requirement("dist4"),
-        ]
+        ],
     ) == await lazy.resolve(context)
     venv.install.assert_called_once_with(
         cr.get_requirement_set(
@@ -676,8 +704,8 @@ async def test_consistent_lower_bounds(monkeypatch: MonkeyPatch) -> None:
                 Requirement("dist2[extra]<=2.0.0,!=2.1.1"),
                 Requirement("dist3>1.0.0"),
                 Requirement("dist4"),
-            ]
-        )
+            ],
+        ),
     )
 
 
@@ -691,7 +719,7 @@ async def test_consistent_lower_bounds__no_python(monkeypatch: MonkeyPatch) -> N
             Requirement("dist2[extra]>=2.0.0,!=2.1.1"),
             Requirement("dist3>1.0.0"),
             Requirement("dist4"),
-        ]
+        ],
     )
 
     def fake_distribution_metadata(distribution: str) -> cr.DistributionMetadata:
@@ -700,7 +728,7 @@ async def test_consistent_lower_bounds__no_python(monkeypatch: MonkeyPatch) -> N
             {
                 "dist1": "1.2.0",
                 "dist2": "1.12.0",
-            }[distribution]
+            }[distribution],
         )
         return metadata
 
@@ -722,7 +750,7 @@ async def test_consistent_lower_bounds__no_python(monkeypatch: MonkeyPatch) -> N
             Requirement("dist2[extra]>=1.12.0,!=2.1.1"),
             Requirement("dist3>1.0.0"),
             Requirement("dist4"),
-        ]
+        ],
     ) == await lazy.resolve(context)
     venv.install.assert_called_once_with(
         cr.get_requirement_set(
@@ -731,6 +759,6 @@ async def test_consistent_lower_bounds__no_python(monkeypatch: MonkeyPatch) -> N
                 Requirement("dist2[extra]<=2.0.0,!=2.1.1"),
                 Requirement("dist3>1.0.0"),
                 Requirement("dist4"),
-            ]
-        )
+            ],
+        ),
     )

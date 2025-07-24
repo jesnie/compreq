@@ -12,8 +12,8 @@ def test_optional_requirement() -> None:
 
     assert requirement == optional.requirement
     assert True is optional.optional
-    assert "foo" == optional.name
-    assert "http://my.url.com/file.tag.gz" == optional.url
+    assert optional.name == "foo"
+    assert optional.url == "http://my.url.com/file.tag.gz"
     assert {"extra"} == optional.extras
     assert SpecifierSet() == optional.specifier
     assert optional.marker is None
@@ -23,7 +23,7 @@ def test_optional_requirement() -> None:
 
     assert requirement == optional.requirement
     assert False is optional.optional
-    assert "foo" == optional.name
+    assert optional.name == "foo"
     assert optional.url is None
     assert not optional.extras
     assert SpecifierSet("<2.0,>=1.2") == optional.specifier
@@ -48,7 +48,8 @@ def test_optional_requirement() -> None:
     ],
 )
 def test_get_optional_requirement(
-    requirement: cr.AnyOptionalRequirement, expected: cr.OptionalRequirement
+    requirement: cr.AnyOptionalRequirement,
+    expected: cr.OptionalRequirement,
 ) -> None:
     assert expected == cr.get_optional_requirement(requirement)
 
@@ -73,7 +74,7 @@ def test_requirement_set__empty() -> None:
     requirement_set = cr.get_requirement_set([])
 
     assert len(requirement_set) == 0
-    assert {} == dict(requirement_set)
+    assert dict(requirement_set) == {}
     assert "foo_1" not in requirement_set
     assert not bool(requirement_set)
 
@@ -86,7 +87,7 @@ def test_requirement_set__empty() -> None:
             cr.RequirementSet(
                 {
                     "foo": cr.OptionalRequirement(Requirement("foo<2.0,>=1.3"), optional=False),
-                }
+                },
             ),
         ),
         (
@@ -94,7 +95,7 @@ def test_requirement_set__empty() -> None:
             cr.RequirementSet(
                 {
                     "foo": cr.OptionalRequirement(Requirement("foo<2.0,>=1.3"), optional=False),
-                }
+                },
             ),
         ),
         (
@@ -102,7 +103,7 @@ def test_requirement_set__empty() -> None:
             cr.RequirementSet(
                 {
                     "foo": cr.OptionalRequirement(Requirement("foo<2.0,>=1.3"), optional=True),
-                }
+                },
             ),
         ),
         (
@@ -116,7 +117,7 @@ def test_requirement_set__empty() -> None:
                     "foo1": cr.OptionalRequirement(Requirement("foo1==1.1"), optional=False),
                     "foo2": cr.OptionalRequirement(Requirement("foo2==1.2"), optional=False),
                     "foo3": cr.OptionalRequirement(Requirement("foo3==1.3"), optional=True),
-                }
+                },
             ),
         ),
         (
@@ -130,12 +131,13 @@ def test_requirement_set__empty() -> None:
                     "foo1": cr.OptionalRequirement(Requirement("foo1==1.1"), optional=False),
                     "foo2": cr.OptionalRequirement(Requirement("foo2==1.2"), optional=False),
                     "foo3": cr.OptionalRequirement(Requirement("foo3==1.3"), optional=True),
-                }
+                },
             ),
         ),
     ],
 )
 def test_get_requirement_set(
-    requirement_set: cr.AnyRequirementSet_, expected: cr.RequirementSet
+    requirement_set: cr.AnyRequirementSet_,
+    expected: cr.RequirementSet,
 ) -> None:
     assert expected == cr.get_requirement_set(requirement_set)

@@ -5,8 +5,7 @@ UtcDatetime = NewType("UtcDatetime", dt.datetime)
 
 
 def is_utc_datetime(time: Any) -> TypeGuard[UtcDatetime]:
-    """
-    Check whether this object is a `UtcDatetime`.
+    """Check whether this object is a `UtcDatetime`.
 
     You can use this to cast an object to a `UtcDatetime` with a simple assert::
 
@@ -18,15 +17,15 @@ def is_utc_datetime(time: Any) -> TypeGuard[UtcDatetime]:
         assert is_utc_datetime(t)
         reveal_type(t)  # note: Revealed type is "compreq.time.UtcDatetime"
     """
-    if type(time) != dt.datetime:  # pylint: disable=unidiomatic-typecheck
+    if type(time) is not dt.datetime:
         return False
-    if time.tzinfo is not None:
-        return time.tzinfo.tzname(None) == "UTC"
-    return False
+    if time.tzinfo is None:
+        return False
+    return time.tzinfo.tzname(None) == "UTC"
 
 
 def utc_now() -> UtcDatetime:
     """Get the current time as a `UtcDatetime`."""
-    now = dt.datetime.utcnow().replace(tzinfo=dt.timezone.utc)
+    now = dt.datetime.now(tz=dt.timezone.utc)
     assert is_utc_datetime(now)
     return now

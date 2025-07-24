@@ -21,11 +21,12 @@ async def test_default_context(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr("compreq.contexts.get_python_releases", fake_get_python_releases)
 
     fake_foobar_releases = fake_release_set(
-        distribution="foo.bar", releases=["1.2.3", "1.2.4", "1.2.5"]
+        distribution="foo.bar",
+        releases=["1.2.3", "1.2.4", "1.2.5"],
     )
 
     async def fake_get_pypi_releases(distribution: str) -> ReleaseSet:
-        assert "foo.bar" == distribution
+        assert distribution == "foo.bar"
         return fake_foobar_releases
 
     monkeypatch.setattr("compreq.contexts.get_pypi_releases", fake_get_pypi_releases)
@@ -38,7 +39,7 @@ async def test_default_context(monkeypatch: MonkeyPatch) -> None:
     assert fake_foobar_releases == await context.releases("foo.bar")
 
     dcontext = context.for_distribution("foo.bar")
-    assert "foo.bar" == dcontext.distribution
+    assert dcontext.distribution == "foo.bar"
     assert Version("3.9") == dcontext.default_python
     assert python_specifier_ == dcontext.python_specifier
     assert fake_now == dcontext.now

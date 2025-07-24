@@ -86,7 +86,7 @@ def test_infer_superseded() -> None:
                 before_r210,
                 before_r220a1,
                 before_r220a2dev1,
-            ]
+            ],
         ),
     )
 
@@ -108,7 +108,7 @@ def test_infer_superseded() -> None:
                 after_r210,
                 after_r220a1,
                 after_r220a2dev1,
-            ]
+            ],
         ),
     )
 

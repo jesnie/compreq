@@ -27,9 +27,9 @@ class ReleaseSet(Set[Release]):
     releases: frozenset[Release]
 
     def __post_init__(self) -> None:
-        assert all(
-            r.distribution == self.distribution for r in self.releases
-        ), f"Inconsistent distribution names in ReleaseSet. Found: {self}."
+        assert all(r.distribution == self.distribution for r in self.releases), (
+            f"Inconsistent distribution names in ReleaseSet. Found: {self}."
+        )
 
     def __iter__(self) -> Iterator[Release]:
         return iter(self.releases)
@@ -43,7 +43,6 @@ class ReleaseSet(Set[Release]):
 
 def infer_successor(versions: Collection[Version]) -> dict[Version, Version | None]:
     """Given a collection of `Version`s, compute their successors."""
-
     next_main: Version | None = None
     next_pre: Version | None = None
     next_dev: Version | None = None
@@ -63,7 +62,6 @@ def infer_successor(versions: Collection[Version]) -> dict[Version, Version | No
 
 def infer_and_set_successor(releases: ReleaseSet) -> ReleaseSet:
     """Compute and set the `successor` fields on a set of releases."""
-
     by_version = {r.version: r for r in releases}
     successors = infer_successor(by_version)
     for r in sorted(releases, reverse=True):

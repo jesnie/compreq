@@ -13,7 +13,7 @@ def test_get_distribution_metadata(monkeypatch: MonkeyPatch, capsys: CaptureFixt
     get_distribution_metadata.main()
     captured = capsys.readouterr()
     metadata = json.loads(captured.out)
-    assert "compreq" == metadata["name"]
+    assert metadata["name"] == "compreq"
     assert Version(metadata["version"])
     assert SpecifierSet(metadata["requires_python"])
     for r in metadata["requires"]:

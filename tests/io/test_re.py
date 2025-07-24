@@ -14,11 +14,12 @@ baz 345""",
     )
 
     with TextReFile.open(path) as fp:
-        assert 0 == fp.sub("test", "test")
-        assert 2 == fp.sub("23", "xx")
-    assert """
+        assert fp.sub("test", "test") == 0
+        assert fp.sub("23", "xx") == 2
+    assert (
+        path.read_text(encoding="utf-8")
+        == """
 foo 1xx
 bar xx4
-baz 345""" == path.read_text(
-        encoding="utf-8"
+baz 345"""
     )

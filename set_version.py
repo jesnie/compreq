@@ -11,22 +11,22 @@ INIT_VERSION_RE = re.compile(r"(^__version__ *= *\").*(\"$)")
 
 
 def set_pyproject_version(version: Version) -> None:
-    with open(PYPROJECT_FILE, "rt", encoding="utf-8") as fin:
+    with open(PYPROJECT_FILE, encoding="utf-8") as fin:
         config: Any = tomlkit.load(fin)
 
     config["project"]["version"] = str(version)
 
-    with open(PYPROJECT_FILE, "wt", encoding="utf-8") as fout:
+    with open(PYPROJECT_FILE, "w", encoding="utf-8") as fout:
         tomlkit.dump(config, fout)
 
 
 def set_init_version(version: Version) -> None:
-    with open(INIT_FILE, "rt", encoding="utf-8") as fin:
+    with open(INIT_FILE, encoding="utf-8") as fin:
         lines = fin.readlines()
 
     lines = [INIT_VERSION_RE.sub(rf"\g<1>{version}\g<2>", line) for line in lines]
 
-    with open(INIT_FILE, "wt", encoding="utf-8") as fout:
+    with open(INIT_FILE, "w", encoding="utf-8") as fout:
         fout.write("".join(lines))
 
 

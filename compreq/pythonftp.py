@@ -1,6 +1,4 @@
-"""
-Code for crawling https://www.python.org/ftp/
-"""
+"""Code for crawling https://www.python.org/ftp/"""
 
 from __future__ import annotations
 
@@ -78,8 +76,9 @@ class FtpDir(FtpPath):
                 size_str = match[4]
 
                 path_str = self.path_str + href
-                modified = dt.datetime.strptime(modified_str, LS_TIMESTAMP_FORMAT)
-                modified = modified.replace(tzinfo=dt.timezone.utc)
+                modified = dt.datetime.strptime(modified_str, LS_TIMESTAMP_FORMAT).replace(
+                    tzinfo=dt.timezone.utc
+                )
                 assert is_utc_datetime(modified), modified
 
                 if size_str is None:

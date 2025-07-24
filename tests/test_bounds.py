@@ -1016,7 +1016,9 @@ IGNORE_SPECIFIER_SET = SpecifierSet()
     ],
 )
 def test_bounds__minimal_specifier_set(
-    bounds: Bounds, exclusions: bool, expected: SpecifierSet
+    bounds: Bounds,
+    exclusions: bool,
+    expected: SpecifierSet,
 ) -> None:
     assert expected == bounds.minimal_specifier_set(exclusions)
 
@@ -1263,7 +1265,9 @@ def test_bounds__minimal_specifier_set(
     ],
 )
 def test_bounds__upper_specifier_set(
-    bounds: Bounds, exclusions: bool, expected: SpecifierSet
+    bounds: Bounds,
+    exclusions: bool,
+    expected: SpecifierSet,
 ) -> None:
     assert expected == bounds.upper_specifier_set(exclusions)
 
@@ -1510,7 +1514,9 @@ def test_bounds__upper_specifier_set(
     ],
 )
 def test_bounds__lower_specifier_set(
-    bounds: Bounds, exclusions: bool, expected: SpecifierSet
+    bounds: Bounds,
+    exclusions: bool,
+    expected: SpecifierSet,
 ) -> None:
     assert expected == bounds.lower_specifier_set(exclusions)
 

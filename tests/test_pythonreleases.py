@@ -43,8 +43,8 @@ async def test_pythonreleases(monkeypatch: MonkeyPatch) -> None:
                     utc(dt.datetime(2023, 8, 22, 16, 7)),
                     b"Version 3.9.1 binary",
                 ),
-            ]
-        )
+            ],
+        ),
     )
 
     monkeypatch.setattr("compreq.pythonftp.requests.get", fake_requests_get)

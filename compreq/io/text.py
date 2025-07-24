@@ -14,8 +14,7 @@ from compreq.roots import CompReq
 
 
 class TextRequirementsFile:
-    """
-    Wrapper around a `requirements.txt` file.
+    """Wrapper around a `requirements.txt` file.
 
     Usage::
 
@@ -27,8 +26,8 @@ class TextRequirementsFile:
         self.path = Path(path)
         requirements = []
         if self.path.exists():
-            with open(self.path, "rt", encoding="utf-8") as fp:
-                for line in fp.readlines():
+            with open(self.path, encoding="utf-8") as fp:
+                for line in fp:
                     line = line.strip()
                     if not line:
                         continue
