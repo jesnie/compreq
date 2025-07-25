@@ -27,8 +27,7 @@ class LazyRelease(ABC):
 
     @abstractmethod
     def get_distribution(self) -> str | None:
-        """
-        Return the distribution of this `LazyRelease`, if possible.
+        """Return the distribution of this `LazyRelease`, if possible.
 
         Returns `None` if the distribution cannot be determined without resolving the `LazyRelease`.
         """
@@ -69,8 +68,7 @@ class LazyReleaseSet(ABC):
 
     @abstractmethod
     def get_distribution(self) -> str | None:
-        """
-        Return the distribution of this `LazyReleaseSet`, if possible.
+        """Return the distribution of this `LazyReleaseSet`, if possible.
 
         Returns `None` if the distribution cannot be determined without resolving the
         `LazyReleaseSet`.
@@ -118,8 +116,7 @@ class AllLazyReleaseSet(LazyReleaseSet):
 
 @dataclass(order=True, frozen=True)
 class ProdLazyReleaseSet(LazyReleaseSet):
-    """
-    `LazyReleaseSet` that filters another `LazyReleaseSet` and only returns the "production"
+    """`LazyReleaseSet` that filters another `LazyReleaseSet` and only returns the "production"
     releases.
     """
 
@@ -140,8 +137,7 @@ class ProdLazyReleaseSet(LazyReleaseSet):
 
 @dataclass(order=True, frozen=True)
 class PreLazyReleaseSet(LazyReleaseSet):
-    """
-    `LazyReleaseSet` that filters another `LazyReleaseSet` and only returns the "production"
+    """`LazyReleaseSet` that filters another `LazyReleaseSet` and only returns the "production"
     and "pre-release" releases. (Not development releases.)
     """
 
@@ -160,9 +156,7 @@ class PreLazyReleaseSet(LazyReleaseSet):
 
 @dataclass(order=True, frozen=True)
 class SpecifierLazyReleaseSet(LazyReleaseSet):
-    """
-    `LazyReleaseSet` that filters another `LazyReleaseSet` based on specifiers.
-    """
+    """`LazyReleaseSet` that filters another `LazyReleaseSet` based on specifiers."""
 
     source: LazyReleaseSet
     specifier_set: LazySpecifierSet
@@ -319,8 +313,7 @@ def get_specifier_operator(op: AnySpecifierOperator) -> SpecifierOperator:
 
 
 class LazySpecifier(ABC):
-    """
-    Strategy for computing a `Specifier` in the context of a distribution.
+    """Strategy for computing a `Specifier` in the context of a distribution.
 
     Lazy specifiers can be combined with other specifiers; specifier-sets; and requiremnts using the
     `&` operator::
@@ -397,8 +390,7 @@ def get_lazy_specifier(specifier: AnySpecifier) -> LazySpecifier:
 
 
 class LazySpecifierSet(ABC):
-    """
-    Strategy for computing a `SpecifierSet` in the context of a distribution.
+    """Strategy for computing a `SpecifierSet` in the context of a distribution.
 
     Lazy specifier-sets can be combined with specifiers; other specifier-sets; and requiremnts using
     the `&` operator::
@@ -490,8 +482,7 @@ def get_marker(marker: AnyMarker) -> Marker:
 
 @dataclass(order=True, frozen=True)
 class LazyRequirement:
-    """
-    Strategy for computing a `Requirement` in a context.
+    """Strategy for computing a `Requirement` in a context.
 
     A `LazyRequirement` can be in a partially configured state. To be valid a `LazyRequirement`
     must:
@@ -551,9 +542,9 @@ class LazyRequirement:
         return compose(lhs, self)
 
     def assert_valid(self) -> None:
-        assert (
-            self.distribution
-        ), f"A requirement must have the distribution name set. Found: {self.distribution}."
+        assert self.distribution, (
+            f"A requirement must have the distribution name set. Found: {self.distribution}."
+        )
 
     async def resolve(self, context: Context) -> OptionalRequirement:
         """Compute the `Requirement`."""
@@ -690,8 +681,7 @@ def compose(
 
 
 def compose(lhs: AnyRequirement, rhs: AnyRequirement) -> LazySpecifierSet | LazyRequirement:
-    """
-    Combine two specifier-, specifier-set- or requirement-like values into a `LazySpecifierSet` or
+    """Combine two specifier-, specifier-set- or requirement-like values into a `LazySpecifierSet` or
     `LazyRequirement`.
 
     If either of the arguments are a requirement, the result is `LazyRequirement`. If neither
@@ -714,9 +704,9 @@ def compose(lhs: AnyRequirement, rhs: AnyRequirement) -> LazySpecifierSet | Lazy
         )
         distribution = lhr.distribution or rhr.distribution
 
-        assert (
-            lhr.url is None or rhr.url is None or lhr.url == rhr.url
-        ), f"A requirement can have at most one url. Found: {lhr.url} and {rhr.url}."
+        assert lhr.url is None or rhr.url is None or lhr.url == rhr.url, (
+            f"A requirement can have at most one url. Found: {lhr.url} and {rhr.url}."
+        )
         url = lhr.url or rhr.url
 
         extras = frozenset(chain(lhr.extras, rhr.extras))
@@ -738,9 +728,9 @@ def compose(lhs: AnyRequirement, rhs: AnyRequirement) -> LazySpecifierSet | Lazy
         else:
             marker = Marker(f"({lhr.marker}) and ({rhr.marker})")
 
-        assert (
-            lhr.optional is None or rhr.optional is None or lhr.optional == rhr.optional
-        ), f"A requirement can have at most one optional. Found: {lhr.optional} and {rhr.optional}."
+        assert lhr.optional is None or rhr.optional is None or lhr.optional == rhr.optional, (
+            f"A requirement can have at most one optional. Found: {lhr.optional} and {rhr.optional}."
+        )
         optional = lhr.optional or rhr.optional
 
         return LazyRequirement(
@@ -769,9 +759,7 @@ def compose(lhs: AnyRequirement, rhs: AnyRequirement) -> LazySpecifierSet | Lazy
 
 
 class LazyRequirementSet(ABC):
-    """
-    Strategy for computing a `RequirementSet` in a context.
-    """
+    """Strategy for computing a `RequirementSet` in a context."""
 
     @abstractmethod
     async def resolve(self, context: Context) -> RequirementSet:

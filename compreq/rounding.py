@@ -7,8 +7,7 @@ from compreq.levels import Level
 
 
 def ceil(level: Level, version: Version, keep_trailing_zeros: bool) -> Version:
-    """
-    Round a version up at a given level.
+    """Round a version up at a given level.
 
     In practice this means incrementing the value at the given level, and removing all following
     levels. For example::
@@ -30,8 +29,7 @@ def ceil(level: Level, version: Version, keep_trailing_zeros: bool) -> Version:
 
 
 def floor(level: Level, version: Version, keep_trailing_zeros: bool) -> Version:
-    """
-    Round a version down at a given level.
+    """Round a version down at a given level.
 
     In practice this means removing all levels after the given one. For example::
 

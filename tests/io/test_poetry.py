@@ -1,5 +1,3 @@
-# pylint: disable=line-too-long
-
 # Examples:
 # argon2-cffi = {extras = ["argon2"], version = "^23.1.0"}
 # pip = {git = "https://github.com/pypa/pip"}
@@ -76,13 +74,13 @@ MAIN_REQUIREMENTS = cr.get_requirement_set(
         "distgit@git+https://github.com/dist6/dist6",
         "distmarker>=1.2.3; platform_system != 'Darwin' or platform_machine != 'arm64'",
         cr.OptionalRequirement(Requirement("distoptional>=1.2.3"), optional=True),
-    ]
+    ],
 )
 
 DEV_REQUIREMENTS = cr.get_requirement_set(
     [
         "dist-dev1<2.0.0,>=1.2.3",
-    ]
+    ],
 )
 
 
@@ -91,8 +89,8 @@ def test_poetry_pyproject_file__get_requirements(tmp_path: Path) -> None:
     pyproject_path.write_text(PYPROJECT_CONTENTS)
 
     with cr.PoetryPyprojectFile.open(pyproject_path) as pyproject:
-        assert MAIN_REQUIREMENTS == pyproject.get_requirements()
-        assert DEV_REQUIREMENTS == pyproject.get_requirements("dev")
+        assert pyproject.get_requirements() == MAIN_REQUIREMENTS
+        assert pyproject.get_requirements(group="dev") == DEV_REQUIREMENTS
 
 
 def test_poetry_pyproject_file__set_requirements(tmp_path: Path) -> None:
@@ -106,23 +104,23 @@ version = "0.1.0"
 [tool.poetry.dependencies]
 
 [tool.poetry.group.dev.dependencies]
-"""
+""",
     )
 
     with cr.PoetryPyprojectFile.open(pyproject_path) as pyproject:
         compreq = MagicMock(cr.CompReq)
         compreq.context = MagicMock(cr.Context)
         compreq.resolve_requirement_set.side_effect = lambda r: asyncio.run(
-            cr.get_lazy_requirement_set(r).resolve(compreq.context)
+            cr.get_lazy_requirement_set(r).resolve(compreq.context),
         )
 
         pyproject.set_requirements(
             compreq,
             MAIN_REQUIREMENTS,
         )
-        pyproject.set_requirements(compreq, DEV_REQUIREMENTS, "dev")
+        pyproject.set_requirements(compreq, DEV_REQUIREMENTS, group="dev")
 
-    assert PYPROJECT_CONTENTS_AFTER == pyproject_path.read_text()
+    assert pyproject_path.read_text() == PYPROJECT_CONTENTS_AFTER
 
 
 def test_poetry_pyproject_file__get_classifiers(tmp_path: Path) -> None:
@@ -137,11 +135,11 @@ classifiers = [
     "test2",
     "test3",
 ]
-"""
+""",
     )
 
     with cr.PoetryPyprojectFile.open(pyproject_path) as pyproject:
-        assert ["test1", "test2", "test3"] == pyproject.get_classifiers()
+        assert pyproject.get_classifiers() == ["test1", "test2", "test3"]
 
 
 def test_poetry_pyproject_file__set_classifiers(tmp_path: Path) -> None:
@@ -155,14 +153,15 @@ classifiers = [
     "chaff1",
     "chaff2",
 ]
-"""
+""",
     )
 
     with cr.PoetryPyprojectFile.open(pyproject_path) as pyproject:
         pyproject.set_classifiers(["test1", "test2", "test3"])
 
     assert (
-        """
+        pyproject_path.read_text()
+        == """
 [tool.poetry]
 name = "compreq"
 version = "0.1.0"
@@ -172,7 +171,6 @@ classifiers = [
     "test3",
 ]
 """
-        == pyproject_path.read_text()
     )
 
 
@@ -191,7 +189,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
-"""
+""",
     )
 
     comp_req = MagicMock(cr.CompReq)
@@ -216,7 +214,8 @@ classifiers = [
         pyproject.set_python_classifiers(comp_req, lazy_python_releases)
 
     assert (
-        """
+        pyproject_path.read_text()
+        == """
 [tool.poetry]
 name = "compreq"
 version = "0.1.0"
@@ -232,6 +231,5 @@ classifiers = [
     "Programming Language :: Python :: 3.1",
 ]
 """
-        == pyproject_path.read_text()
     )
     comp_req.resolve_release_set.assert_called_once_with("python", lazy_python_releases)

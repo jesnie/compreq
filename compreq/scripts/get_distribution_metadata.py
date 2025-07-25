@@ -1,5 +1,4 @@
-"""
-Export distribution metadata.
+"""Export distribution metadata.
 
 This will be run as a stand-alone script, in a separate virtual environment.
 """

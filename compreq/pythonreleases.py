@@ -17,8 +17,7 @@ _cache_lock = asyncio.Lock()
 
 
 async def get_python_releases(python_specifiers: SpecifierSet) -> ReleaseSet:
-    """
-    Get all releases of Python.
+    """Get all releases of Python.
 
     The `python_specifiers` argument is used to pre-filter the Python versions to fetch. This
     function can be a bit slow, and setting a tight pre-filter can significantly speed it up. If you

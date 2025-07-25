@@ -10,9 +10,7 @@ from compreq.rounding import ceil
 
 @dataclass(order=True, frozen=True)
 class Bounds:
-    """
-    Bounds of versions, extracted from a `SpecfierSet`.
-    """
+    """Bounds of versions, extracted from a `SpecfierSet`."""
 
     specifier_set: SpecifierSet
     """The source `SpecifierSet`."""
@@ -33,57 +31,49 @@ class Bounds:
     """Set of specific versions that are disallowed."""
 
     def minimal_specifier_set(self, exclusions: bool = True) -> SpecifierSet:
-        """
-        Create a new (minimal) specifier set from these bounds.
+        """Create a new (minimal) specifier set from these bounds.
 
         :param exclusions: Whether to excluded specific versions.
         """
         return self.upper_specifier_set(False) & self.lower_specifier_set(exclusions)
 
     def upper_specifier_set(self, exclusions: bool = True) -> SpecifierSet:
-        """
-        Create a new specifier set from the upper bounds.
+        """Create a new specifier set from the upper bounds.
 
         :param exclusions: Whether to excluded specific versions.
         """
         result = SpecifierSet()
         if self.upper is not None:
             if self.upper_inclusive:
-                result &= SpecifierSet(f"<={str(self.upper)}")
+                result &= SpecifierSet(f"<={self.upper!s}")
             else:
-                result &= SpecifierSet(f"<{str(self.upper)}")
+                result &= SpecifierSet(f"<{self.upper!s}")
         if exclusions:
             result &= self.exclusions_specifier_set()
         return result
 
     def lower_specifier_set(self, exclusions: bool = True) -> SpecifierSet:
-        """
-        Create a new specifier set from the lower bounds.
+        """Create a new specifier set from the lower bounds.
 
         :param exclusions: Whether to excluded specific versions.
         """
         result = SpecifierSet()
         if self.lower is not None:
             if self.lower_inclusive:
-                result &= SpecifierSet(f">={str(self.lower)}")
+                result &= SpecifierSet(f">={self.lower!s}")
             else:
-                result &= SpecifierSet(f">{str(self.lower)}")
+                result &= SpecifierSet(f">{self.lower!s}")
         if exclusions:
             result &= self.exclusions_specifier_set()
         return result
 
     def exclusions_specifier_set(self) -> SpecifierSet:
-        """
-        Create a new specifier set, only excluding specific versions.
-        """
-        return SpecifierSet(",".join(f"!={str(v)}" for v in self.exclusions))
+        """Create a new specifier set, only excluding specific versions."""
+        return SpecifierSet(",".join(f"!={v!s}" for v in self.exclusions))
 
 
 def get_bounds(specifier_set: SpecifierSet) -> Bounds:
-    """
-    Extracts bounds from a `SpecifierSet`.
-    """
-
+    """Extracts bounds from a `SpecifierSet`."""
     upper: Version | None = None
     upper_inclusive: bool = False
     lower: Version | None = None
@@ -91,7 +81,7 @@ def get_bounds(specifier_set: SpecifierSet) -> Bounds:
     exclusions: set[Version] = set()
     for specifier in specifier_set:
         version = Version(specifier.version)
-        match (specifier.operator):
+        match specifier.operator:
             case ">":
                 if lower is None or version >= lower:
                     lower = version

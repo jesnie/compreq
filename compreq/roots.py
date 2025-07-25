@@ -73,8 +73,7 @@ class CompReq:
         default_python: Version | str | None = None,
         context: Context | None = None,
     ) -> None:
-        """
-        :param python_specifier: Allowed python versions.
+        """:param python_specifier: Allowed python versions.
             You must set `context` xor `python_specifier`.
         :param default_python: Which version of python to use when resolving requiremnts.
             Can only be set when `python_specifier` is set.
@@ -97,7 +96,10 @@ class CompReq:
         self._context = context
 
     def for_python(
-        self, python_specifier: AnySpecifierSet, *, default_python: AnyVersion | None = None
+        self,
+        python_specifier: AnySpecifierSet,
+        *,
+        default_python: AnyVersion | None = None,
     ) -> CompReq:
         python_specifier = self.resolve_specifier_set("python", python_specifier)
         assert isinstance(python_specifier, SpecifierSet)
@@ -107,8 +109,9 @@ class CompReq:
 
         return CompReq(
             context=self._context.for_python(
-                python_specifier=python_specifier, default_python=default_python
-            )
+                python_specifier=python_specifier,
+                default_python=default_python,
+            ),
         )
 
     def resolve_release(self, distribution: str, release: AnyRelease) -> Release:
@@ -132,7 +135,9 @@ class CompReq:
         return asyncio.run(future)
 
     def resolve_specifier_set(
-        self, distribution: str, specifier_set: AnySpecifierSet
+        self,
+        distribution: str,
+        specifier_set: AnySpecifierSet,
     ) -> SpecifierSet:
         context = self._context.for_distribution(distribution)
         future = get_lazy_specifier_set(specifier_set).resolve(context)

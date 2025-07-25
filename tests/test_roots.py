@@ -21,7 +21,6 @@ from tests.utils import fake_release, fake_release_set
 
 
 def test_comp_req__for_python() -> None:
-    # pylint: disable=protected-access
     context_1 = MagicMock(Context)
     context_2 = MagicMock(Context)
     context_1.for_python.return_value = context_2
@@ -131,7 +130,7 @@ def test_comp_req__resolve_requirement_set() -> None:
     context = MagicMock(Context)
 
     requirement_set = get_requirement_set(
-        [Requirement("foo.bar~=1.2.3"), Requirement("baz==2.0.0")]
+        [Requirement("foo.bar~=1.2.3"), Requirement("baz==2.0.0")],
     )
     lazy = MagicMock(LazyRequirementSet)
     lazy.resolve.return_value = requirement_set

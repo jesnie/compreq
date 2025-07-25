@@ -45,7 +45,7 @@ async def test_pypireleases(monkeypatch: pytest.MonkeyPatch) -> None:
                         "yanked": False,
                     },
                 ],
-            }
+            },
         }
         return reply
 

@@ -1,4 +1,3 @@
-from typing import Type
 from unittest.mock import MagicMock
 
 import pytest
@@ -16,7 +15,7 @@ async def test_eager_lazy_release() -> None:
     lazy = cr.EagerLazyRelease(release)
 
     context = MagicMock(cr.DistributionContext)
-    assert "foo.bar" == lazy.get_distribution()
+    assert lazy.get_distribution() == "foo.bar"
     assert release == await lazy.resolve(context)
 
 
@@ -51,20 +50,20 @@ async def test_eager_lazy_release_set() -> None:
     release_1 = fake_release(version="1.1.0", successor=release_2)
 
     lazy = cr.EagerLazyReleaseSet(
-        frozenset([cr.get_lazy_release(release_1), cr.get_lazy_release(release_2)])
+        frozenset([cr.get_lazy_release(release_1), cr.get_lazy_release(release_2)]),
     )
     context = MagicMock(cr.DistributionContext)
     context.distribution = "foo.bar"
 
-    assert "foo.bar" == lazy.get_distribution()
+    assert lazy.get_distribution() == "foo.bar"
     assert cr.ReleaseSet("foo.bar", frozenset([release_1, release_2])) == await lazy.resolve(
-        context
+        context,
     )
 
 
 async def test_all_lazy_release_set() -> None:
     releases = fake_release_set(
-        releases=["1.2.0", "1.3.0.rc1.dev1", "1.3.0.rc1", "1.3.0.dev1", "1.3.0"]
+        releases=["1.2.0", "1.3.0.rc1.dev1", "1.3.0.rc1", "1.3.0.dev1", "1.3.0"],
     )
 
     lazy = cr.AllLazyReleaseSet(None)
@@ -74,14 +73,15 @@ async def test_all_lazy_release_set() -> None:
 
     assert lazy.get_distribution() is None
     assert fake_release_set(
-        releases=["1.2.0", "1.3.0.rc1.dev1", "1.3.0.rc1", "1.3.0.dev1", "1.3.0"]
+        releases=["1.2.0", "1.3.0.rc1.dev1", "1.3.0.rc1", "1.3.0.dev1", "1.3.0"],
     ) == await lazy.resolve(context)
     context.releases.assert_called_once_with("foo.bar")
 
 
 async def test_all_lazy_release_set__distribution() -> None:
     releases = fake_release_set(
-        distribution="foo", releases=["1.2.0", "1.3.0.rc1.dev1", "1.3.0.rc1", "1.3.0.dev1", "1.3.0"]
+        distribution="foo",
+        releases=["1.2.0", "1.3.0.rc1.dev1", "1.3.0.rc1", "1.3.0.dev1", "1.3.0"],
     )
 
     lazy = cr.AllLazyReleaseSet("foo")
@@ -89,7 +89,7 @@ async def test_all_lazy_release_set__distribution() -> None:
     context.distribution = "foo.bar"
     context.releases.return_value = releases
 
-    assert "foo" == lazy.get_distribution()
+    assert lazy.get_distribution() == "foo"
     assert (
         releases
         == fake_release_set(
@@ -103,7 +103,7 @@ async def test_all_lazy_release_set__distribution() -> None:
 
 async def test_prod_lazy_release_set() -> None:
     releases = fake_release_set(
-        releases=["1.2.0", "1.3.0.rc1.dev1", "1.3.0.rc1", "1.3.0.dev1", "1.3.0"]
+        releases=["1.2.0", "1.3.0.rc1.dev1", "1.3.0.rc1", "1.3.0.dev1", "1.3.0"],
     )
     source = MagicMock(cr.LazyReleaseSet)
     source.get_distribution.return_value = "foo"
@@ -112,14 +112,14 @@ async def test_prod_lazy_release_set() -> None:
 
     lazy = cr.ProdLazyReleaseSet(source)
 
-    assert "foo" == lazy.get_distribution()
+    assert lazy.get_distribution() == "foo"
     assert fake_release_set(releases=["1.2.0", "1.3.0"]) == await lazy.resolve(context)
     source.resolve.assert_called_once_with(context)
 
 
 async def test_pre_lazy_release_set() -> None:
     releases = fake_release_set(
-        releases=["1.2.0", "1.3.0.rc1.dev1", "1.3.0.rc1", "1.3.0.dev1", "1.3.0"]
+        releases=["1.2.0", "1.3.0.rc1.dev1", "1.3.0.rc1", "1.3.0.dev1", "1.3.0"],
     )
     source = MagicMock(cr.LazyReleaseSet)
     source.get_distribution.return_value = "foo"
@@ -128,7 +128,7 @@ async def test_pre_lazy_release_set() -> None:
 
     lazy = cr.PreLazyReleaseSet(source)
 
-    assert "foo" == lazy.get_distribution()
+    assert lazy.get_distribution() == "foo"
     assert fake_release_set(releases=["1.2.0", "1.3.0.rc1", "1.3.0"]) == await lazy.resolve(context)
     source.resolve.assert_called_once_with(context)
 
@@ -145,7 +145,7 @@ async def test_specifier_lazy_release_set() -> None:
 
     lazy = cr.SpecifierLazyReleaseSet(source, cr.get_lazy_specifier_set(">=1.3.0,<2.0.0"))
 
-    assert "foo" == lazy.get_distribution()
+    assert lazy.get_distribution() == "foo"
     assert fake_release_set(
         releases=["1.3.0", "1.3.1", "1.4.0"],
         infer_successors=False,
@@ -183,7 +183,7 @@ async def test_specifier_lazy_release_set() -> None:
                     [
                         fake_release(version="1.3.0"),
                         fake_release(version="1.4.0"),
-                    ]
+                    ],
                 ),
             ),
             cr.EagerLazyReleaseSet(
@@ -191,8 +191,8 @@ async def test_specifier_lazy_release_set() -> None:
                     [
                         cr.EagerLazyRelease(fake_release(version="1.3.0")),
                         cr.EagerLazyRelease(fake_release(version="1.4.0")),
-                    ]
-                )
+                    ],
+                ),
             ),
         ),
         (
@@ -205,7 +205,7 @@ async def test_specifier_lazy_release_set() -> None:
                     [
                         cr.EagerLazyRelease(fake_release(version="1.5.0")),
                         cr.EagerLazyRelease(fake_release(version="1.6.0")),
-                    ]
+                    ],
                 ),
             ),
             cr.EagerLazyReleaseSet(
@@ -213,8 +213,8 @@ async def test_specifier_lazy_release_set() -> None:
                     [
                         cr.EagerLazyRelease(fake_release(version="1.5.0")),
                         cr.EagerLazyRelease(fake_release(version="1.6.0")),
-                    ]
-                )
+                    ],
+                ),
             ),
         ),
         (
@@ -304,7 +304,7 @@ async def test_release_lazy_version() -> None:
             cr.ReleaseLazyVersion(
                 cr.EagerLazyRelease(
                     fake_release(version="1.2.0"),
-                )
+                ),
             ),
         ),
         (Version("1.3.0"), cr.EagerLazyVersion(Version("1.3.0"))),
@@ -323,7 +323,8 @@ def test_get_lazy_version(version: cr.AnyVersion, expected: cr.LazyVersion) -> N
     ],
 )
 def test_get_specifier_operator(
-    op: cr.AnySpecifierOperator, expected: cr.SpecifierOperator
+    op: cr.AnySpecifierOperator,
+    expected: cr.SpecifierOperator,
 ) -> None:
     assert cr.get_specifier_operator(op) == expected
 
@@ -414,16 +415,16 @@ async def test_composite_lazy_specifier_set() -> None:
             fake_release(version="2.1.4"),
             cr.EagerLazySpecifierSet(
                 frozenset(
-                    [cr.ReleaseLazySpecifier(cr.EagerLazyRelease(fake_release(version="2.1.4")))]
-                )
+                    [cr.ReleaseLazySpecifier(cr.EagerLazyRelease(fake_release(version="2.1.4")))],
+                ),
             ),
         ),
         (
             cr.EagerLazyRelease(fake_release(version="2.1.4")),
             cr.EagerLazySpecifierSet(
                 frozenset(
-                    [cr.ReleaseLazySpecifier(cr.EagerLazyRelease(fake_release(version="2.1.4")))]
-                )
+                    [cr.ReleaseLazySpecifier(cr.EagerLazyRelease(fake_release(version="2.1.4")))],
+                ),
             ),
         ),
         (
@@ -437,21 +438,22 @@ async def test_composite_lazy_specifier_set() -> None:
         (
             SpecifierSet(">=1.4.0,<2.0.0"),
             cr.EagerLazySpecifierSet(
-                frozenset([cr.get_lazy_specifier(">=1.4.0"), cr.get_lazy_specifier("<2.0.0")])
+                frozenset([cr.get_lazy_specifier(">=1.4.0"), cr.get_lazy_specifier("<2.0.0")]),
             ),
         ),
         (
             cr.EagerLazySpecifierSet(
-                frozenset([cr.get_lazy_specifier(">=1.5.0"), cr.get_lazy_specifier("<2.0.0")])
+                frozenset([cr.get_lazy_specifier(">=1.5.0"), cr.get_lazy_specifier("<2.0.0")]),
             ),
             cr.EagerLazySpecifierSet(
-                frozenset([cr.get_lazy_specifier(">=1.5.0"), cr.get_lazy_specifier("<2.0.0")])
+                frozenset([cr.get_lazy_specifier(">=1.5.0"), cr.get_lazy_specifier("<2.0.0")]),
             ),
         ),
     ],
 )
 def test_get_lazy_specifier_set(
-    specifier_set: cr.AnySpecifierSet, expected: cr.LazySpecifierSet
+    specifier_set: cr.AnySpecifierSet,
+    expected: cr.LazySpecifierSet,
 ) -> None:
     assert cr.get_lazy_specifier_set(specifier_set) == expected
 
@@ -484,7 +486,8 @@ async def test_lazy_requirement__specifier() -> None:
     context.for_distribution.return_value = distribution_context
 
     assert cr.OptionalRequirement(
-        Requirement("foo.bar[extra_1,extra_2]<2.0.0,>=1.2.3; python_version > '2.0'"), True
+        Requirement("foo.bar[extra_1,extra_2]<2.0.0,>=1.2.3; python_version > '2.0'"),
+        True,
     ) == await requirement.resolve(context)
     context.for_distribution.assert_called_once_with("foo.bar")
     specifier_set.resolve.assert_called_once_with(distribution_context)
@@ -505,7 +508,8 @@ async def test_lazy_requirement__url() -> None:
     context.for_distribution.return_value = distribution_context
 
     assert cr.OptionalRequirement(
-        Requirement("foo.bar@ http://path1/path2"), False
+        Requirement("foo.bar@ http://path1/path2"),
+        False,
     ) == await requirement.resolve(context)
     context.for_distribution.assert_called_once_with("foo.bar")
 
@@ -603,7 +607,8 @@ async def test_lazy_requirement__url() -> None:
         ),
         (
             cr.OptionalRequirement(
-                Requirement("foo.bar[extra]==1.5.0; python_version > '2.0.0'"), True
+                Requirement("foo.bar[extra]==1.5.0; python_version > '2.0.0'"),
+                True,
             ),
             cr.LazyRequirement(
                 distribution="foo.bar",
@@ -1285,11 +1290,11 @@ def test_get_lazy_requirement(requirement: cr.AnyRequirement, expected: cr.LazyR
 def test_compose(
     lhs: cr.LazyRequirement,
     rhs: cr.LazyRequirement,
-    expected: cr.LazyRequirement | cr.LazySpecifierSet | Type[Exception],
+    expected: cr.LazyRequirement | cr.LazySpecifierSet | type[Exception],
 ) -> None:
     if isinstance(expected, type):
         with pytest.raises(expected):
-            lhs & rhs  # pylint: disable=pointless-statement
+            lhs & rhs
     else:
         assert (lhs & rhs) == expected
 
@@ -1308,16 +1313,16 @@ def test_compose__specifier_sets() -> None:
     composite_2 = cr.CompositeLazySpecifierSet(frozenset([specifier_set_1, specifier_set_3]))
 
     assert cr.EagerLazySpecifierSet(
-        frozenset([specifier_1, specifier_2, specifier_3])
+        frozenset([specifier_1, specifier_2, specifier_3]),
     ) == cr.compose(eager_1, eager_2)
     assert cr.CompositeLazySpecifierSet(
-        frozenset([eager_1, specifier_set_1, specifier_set_2])
+        frozenset([eager_1, specifier_set_1, specifier_set_2]),
     ) == cr.compose(eager_1, composite_1)
     assert cr.CompositeLazySpecifierSet(
-        frozenset([eager_1, specifier_set_1, specifier_set_2])
+        frozenset([eager_1, specifier_set_1, specifier_set_2]),
     ) == cr.compose(composite_1, eager_1)
     assert cr.CompositeLazySpecifierSet(
-        frozenset([specifier_set_1, specifier_set_2, specifier_set_3])
+        frozenset([specifier_set_1, specifier_set_2, specifier_set_3]),
     ) == cr.compose(composite_1, composite_2)
 
 
@@ -1336,9 +1341,9 @@ def test_compose__specifier_sets() -> None:
                             specifier=None,
                             marker=None,
                             optional=None,
-                        )
-                    ]
-                )
+                        ),
+                    ],
+                ),
             ),
         ),
         (
@@ -1353,9 +1358,9 @@ def test_compose__specifier_sets() -> None:
                             specifier=cr.get_lazy_specifier_set("==1.1.0"),
                             marker=None,
                             optional=None,
-                        )
-                    ]
-                )
+                        ),
+                    ],
+                ),
             ),
         ),
         (
@@ -1371,8 +1376,8 @@ def test_compose__specifier_sets() -> None:
                             marker=None,
                             optional=None,
                         ),
-                    ]
-                )
+                    ],
+                ),
             ),
         ),
         (
@@ -1388,8 +1393,8 @@ def test_compose__specifier_sets() -> None:
                             marker=None,
                             optional=None,
                         ),
-                    ]
-                )
+                    ],
+                ),
             ),
         ),
         (
@@ -1404,9 +1409,9 @@ def test_compose__specifier_sets() -> None:
                             specifier=cr.get_lazy_specifier_set("==1.2.0"),
                             marker=None,
                             optional=None,
-                        )
-                    ]
-                )
+                        ),
+                    ],
+                ),
             ),
         ),
         (
@@ -1421,9 +1426,9 @@ def test_compose__specifier_sets() -> None:
                             specifier=cr.get_lazy_specifier_set("==1.3.0"),
                             marker=None,
                             optional=None,
-                        )
-                    ]
-                )
+                        ),
+                    ],
+                ),
             ),
         ),
         (
@@ -1438,9 +1443,9 @@ def test_compose__specifier_sets() -> None:
                             specifier=cr.get_lazy_specifier_set(">=1.4.0,<2.0.0"),
                             marker=None,
                             optional=None,
-                        )
-                    ]
-                )
+                        ),
+                    ],
+                ),
             ),
         ),
         (
@@ -1455,14 +1460,15 @@ def test_compose__specifier_sets() -> None:
                             specifier=cr.get_lazy_specifier_set(">=1.4.0,<2.0.0"),
                             marker=None,
                             optional=None,
-                        )
-                    ]
-                )
+                        ),
+                    ],
+                ),
             ),
         ),
         (
             cr.OptionalRequirement(
-                Requirement("foo.bar[extra]==1.5.0; python_version > '2.0.0'"), True
+                Requirement("foo.bar[extra]==1.5.0; python_version > '2.0.0'"),
+                True,
             ),
             cr.EagerLazyRequirementSet(
                 frozenset(
@@ -1474,9 +1480,9 @@ def test_compose__specifier_sets() -> None:
                             specifier=cr.get_lazy_specifier_set("==1.5.0"),
                             marker=Marker("python_version > '2.0.0'"),
                             optional=True,
-                        )
-                    ]
-                )
+                        ),
+                    ],
+                ),
             ),
         ),
         (
@@ -1491,9 +1497,9 @@ def test_compose__specifier_sets() -> None:
                             specifier=cr.get_lazy_specifier_set("==1.5.0"),
                             marker=Marker("python_version > '2.0.0'"),
                             optional=None,
-                        )
-                    ]
-                )
+                        ),
+                    ],
+                ),
             ),
         ),
         (
@@ -1515,9 +1521,9 @@ def test_compose__specifier_sets() -> None:
                             specifier=cr.get_lazy_specifier_set("==1.7.0"),
                             marker=Marker("python_version > '2.0.0'"),
                             optional=True,
-                        )
-                    ]
-                )
+                        ),
+                    ],
+                ),
             ),
         ),
         (
@@ -1544,7 +1550,7 @@ def test_compose__specifier_sets() -> None:
                             marker=None,
                             optional=False,
                         ),
-                    ]
+                    ],
                 ),
             ),
         ),
@@ -1572,7 +1578,7 @@ def test_compose__specifier_sets() -> None:
                             marker=None,
                             optional=None,
                         ),
-                    ]
+                    ],
                 ),
             ),
         ),
@@ -1600,7 +1606,7 @@ def test_compose__specifier_sets() -> None:
                             marker=None,
                             optional=False,
                         ),
-                    ]
+                    ],
                 ),
             ),
         ),
@@ -1628,7 +1634,7 @@ def test_compose__specifier_sets() -> None:
                             marker=None,
                             optional=None,
                         ),
-                    ]
+                    ],
                 ),
             ),
         ),
@@ -1658,7 +1664,7 @@ def test_compose__specifier_sets() -> None:
                             marker=None,
                             optional=False,
                         ),
-                    ]
+                    ],
                 ),
             ),
         ),
@@ -1682,7 +1688,7 @@ def test_compose__specifier_sets() -> None:
                             marker=None,
                             optional=False,
                         ),
-                    ]
+                    ],
                 ),
             ),
             cr.EagerLazyRequirementSet(
@@ -1704,13 +1710,14 @@ def test_compose__specifier_sets() -> None:
                             marker=None,
                             optional=False,
                         ),
-                    ]
+                    ],
                 ),
             ),
         ),
     ],
 )
 def test_get_lazy_requirement_set(
-    requirement_set: cr.AnyRequirementSet, expected: cr.LazyRequirementSet
+    requirement_set: cr.AnyRequirementSet,
+    expected: cr.LazyRequirementSet,
 ) -> None:
     assert cr.get_lazy_requirement_set(requirement_set) == expected

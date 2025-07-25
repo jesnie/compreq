@@ -30,7 +30,7 @@ REQUIREMENTS = cr.get_requirement_set(
         "distmarker>=1.2.3; platform_system != 'Darwin' or platform_machine != 'arm64'",
         "distpath@file:///home/compreq",
         "disturl@http://www.test.com/test/dist7-1.2.3.tar.gz",
-    ]
+    ],
 )
 
 
@@ -39,7 +39,7 @@ def test_text_requirements_file__get_requirements(tmp_path: Path) -> None:
     requirements_path.write_text(TEXT_REQUIREMENTS)
 
     with cr.TextRequirementsFile.open(requirements_path) as requirements:
-        assert REQUIREMENTS == requirements.get_requirements()
+        assert requirements.get_requirements() == REQUIREMENTS
 
 
 def test_text_requirements_file__set_requirements(tmp_path: Path) -> None:
@@ -50,16 +50,16 @@ def test_text_requirements_file__set_requirements(tmp_path: Path) -> None:
   # A comment
 
 foo<2.0.0,>=1.2.3
-"""
+""",
     )
 
     with cr.TextRequirementsFile.open(requirements_path) as requirements:
         compreq = MagicMock(cr.CompReq)
         compreq.context = MagicMock(cr.Context)
         compreq.resolve_requirement_set.side_effect = lambda r: asyncio.run(
-            cr.get_lazy_requirement_set(r).resolve(compreq.context)
+            cr.get_lazy_requirement_set(r).resolve(compreq.context),
         )
 
         requirements.set_requirements(compreq, REQUIREMENTS)
 
-    assert TEXT_REQUIREMENTS == requirements_path.read_text()
+    assert requirements_path.read_text() == TEXT_REQUIREMENTS

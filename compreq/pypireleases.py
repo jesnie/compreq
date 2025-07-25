@@ -22,7 +22,7 @@ async def get_pypi_releases(distribution: str) -> ReleaseSet:
     def _get_releases() -> ReleaseSet:
         url = f"https://pypi.org/pypi/{distribution}/json"
         data = requests.get(url, timeout=600.0).json()
-        assert {"message": "Not Found"} != data, distribution
+        assert data != {"message": "Not Found"}, distribution
         result = set()
         for version_str, release_data in data["releases"].items():
             version = parse(version_str)
@@ -50,7 +50,7 @@ async def get_pypi_releases(distribution: str) -> ReleaseSet:
                     version=version,
                     released_time=released_time,
                     successor=None,  # Set by infer_and_set_successor.
-                )
+                ),
             )
         return infer_and_set_successor(ReleaseSet(distribution, frozenset(result)))
 

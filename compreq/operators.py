@@ -1,5 +1,3 @@
-# pylint: disable=redefined-outer-name
-
 import asyncio
 import datetime as dt
 from dataclasses import dataclass, replace
@@ -71,44 +69,39 @@ See also: `version`, `specifier`, specifier_set`.
 
 
 def distribution(value: str) -> LazyRequirement:
-    """
-    Create a `LazyRequirement` with this distribution. Example::
+    """Create a `LazyRequirement` with this distribution. Example::
 
-        distribution("compreq") & version(">=", "1.2.3")
+    distribution("compreq") & version(">=", "1.2.3")
     """
     return replace(EMPTY_REQUIREMENT, distribution=value)
 
 
 def dist(value: str) -> LazyRequirement:
-    """
-    Create a `LazyRequirement` with this distribution. Example::
+    """Create a `LazyRequirement` with this distribution. Example::
 
-        dist("compreq") & v(">=", "1.2.3")
+    dist("compreq") & v(">=", "1.2.3")
     """
     return replace(EMPTY_REQUIREMENT, distribution=value)
 
 
 def url(value: str) -> LazyRequirement:
-    """
-    Create a `LazyRequirement` with this URL. Example::
+    """Create a `LazyRequirement` with this URL. Example::
 
-        dist("compreq") & url("https://...")
+    dist("compreq") & url("https://...")
     """
     return replace(EMPTY_REQUIREMENT, url=value)
 
 
 def extra(value: str) -> LazyRequirement:
-    """
-    Create a `LazyRequirement` with this extra. Example::
+    """Create a `LazyRequirement` with this extra. Example::
 
-        dist("compreq") & extra("torch") & extra("tensorflow")
+    dist("compreq") & extra("torch") & extra("tensorflow")
     """
     return replace(EMPTY_REQUIREMENT, extras=frozenset([value]))
 
 
 def specifier(value: AnySpecifier) -> LazySpecifier:
-    """
-    Create a `LazyRequirement` with this version specifier. Example::
+    """Create a `LazyRequirement` with this version specifier. Example::
 
         dist("compreq") & specifier(">=1.2.3")
 
@@ -118,8 +111,7 @@ def specifier(value: AnySpecifier) -> LazySpecifier:
 
 
 def specifier_set(value: AnySpecifierSet) -> LazySpecifierSet:
-    """
-    Create a `LazyRequirement` with this version specifier set. Example::
+    """Create a `LazyRequirement` with this version specifier set. Example::
 
         dist("compreq") & specifier_set("<2.0.0,>=1.2.3")
 
@@ -129,17 +121,15 @@ def specifier_set(value: AnySpecifierSet) -> LazySpecifierSet:
 
 
 def marker(value: AnyMarker) -> LazyRequirement:
-    """
-    Create a `LazyRequirement` conditional on this marker. Example::
+    """Create a `LazyRequirement` conditional on this marker. Example::
 
-        dist("compreq") & marker("platform_system != 'Darwin' or platform_machine != 'arm64'")
+    dist("compreq") & marker("platform_system != 'Darwin' or platform_machine != 'arm64'")
     """
     return replace(EMPTY_REQUIREMENT, marker=get_marker(value))
 
 
 def optional(value: bool = True) -> LazyRequirement:
-    """
-    Marks this requirment as "optional".
+    """Marks this requirment as "optional".
 
     Currently only used by poetry.
 
@@ -151,8 +141,7 @@ def optional(value: bool = True) -> LazyRequirement:
 
 
 def releases(distribution: str | None = None) -> LazyReleaseSet:
-    """
-    Returns the set of all "production" releases of this distribution.
+    """Returns the set of all "production" releases of this distribution.
 
     :param distribution: Distribution to get releases of. If `None`, the distribution is determined
     from the context.
@@ -163,8 +152,7 @@ def releases(distribution: str | None = None) -> LazyReleaseSet:
 def prereleases(
     distribution: str | None = None,
 ) -> LazyReleaseSet:
-    """
-    Returns the set of all "production" and pre-releases of this distribution. (No dev-releases.)
+    """Returns the set of all "production" and pre-releases of this distribution. (No dev-releases.)
 
     :param distribution: Distribution to get releases of. If `None`, the distribution is determined
     from the context.
@@ -175,8 +163,7 @@ def prereleases(
 def devreleases(
     distribution: str | None = None,
 ) -> LazyReleaseSet:
-    """
-    Returns the set of all "production", pre-, and dev-releases releases of this distribution.
+    """Returns the set of all "production", pre-, and dev-releases releases of this distribution.
 
     :param distribution: Distribution to get releases of. If `None`, the distribution is determined
     from the context.
@@ -212,8 +199,7 @@ def python_specifier() -> LazySpecifierSet:
 
 @dataclass(order=True, frozen=True)
 class MinLazyRelease(LazyRelease):
-    """
-    Strategy for getting the release with the minimal version.
+    """Strategy for getting the release with the minimal version.
 
     See also: `min_ver`, `MaxLazyRelease`, `MinimumLazyVersion`
     """
@@ -229,8 +215,7 @@ class MinLazyRelease(LazyRelease):
 
 
 def min_ver(release_set: AnyReleaseSet | None = None) -> LazyRelease:
-    """
-    Get the release with the minimal version.
+    """Get the release with the minimal version.
 
     See also: `max_ver`, `MinLazyRelease`, `minimum_ver`
 
@@ -242,8 +227,7 @@ def min_ver(release_set: AnyReleaseSet | None = None) -> LazyRelease:
 
 @dataclass(order=True, frozen=True)
 class MaxLazyRelease(LazyRelease):
-    """
-    Strategy for getting the release with the maximal version.
+    """Strategy for getting the release with the maximal version.
 
     See also: `max_ver`, `MinLazyRelease`, `MaximumLazyVersion`
     """
@@ -259,8 +243,7 @@ class MaxLazyRelease(LazyRelease):
 
 
 def max_ver(release_set: AnyReleaseSet | None = None) -> LazyRelease:
-    """
-    Get the release with the maximal version.
+    """Get the release with the maximal version.
 
     See also: `min_ver`, `MaxLazyRelease`, `maximum_ver`
 
@@ -272,8 +255,7 @@ def max_ver(release_set: AnyReleaseSet | None = None) -> LazyRelease:
 
 @dataclass(order=True, frozen=True)
 class MinimumLazyVersion(LazyVersion):
-    """
-    Strategy for getting the minimal of a fixed set of versions.
+    """Strategy for getting the minimal of a fixed set of versions.
 
     See also: `minimum_ver`, `MinLazyRelease`, `MaximumLazyVersion`
     """
@@ -286,8 +268,7 @@ class MinimumLazyVersion(LazyVersion):
 
 
 def minimum_ver(*versions: AnyVersion) -> LazyVersion:
-    """
-    Get the minimal version from a fixed set of versions.
+    """Get the minimal version from a fixed set of versions.
 
     See also: `min_ver`, `MinimumLazyVersion`, `maximum_ver`
 
@@ -299,8 +280,7 @@ def minimum_ver(*versions: AnyVersion) -> LazyVersion:
 
 @dataclass(order=True, frozen=True)
 class MaximumLazyVersion(LazyVersion):
-    """
-    Strategy for getting the maximal of a fixed set of versions.
+    """Strategy for getting the maximal of a fixed set of versions.
 
     See also: `maximum_ver`, `MaxLazyRelease`, `MinimumLazyVersion`
     """
@@ -313,8 +293,7 @@ class MaximumLazyVersion(LazyVersion):
 
 
 def maximum_ver(*versions: AnyVersion) -> LazyVersion:
-    """
-    Get the maximal version from a fixed set of versions.
+    """Get the maximal version from a fixed set of versions.
 
     See also: `max_ver`, `MaximumLazyVersion`, `minimum_ver`
 
@@ -326,9 +305,7 @@ def maximum_ver(*versions: AnyVersion) -> LazyVersion:
 
 @dataclass(order=True, frozen=True)
 class CeilLazyVersion(LazyVersion):
-    """
-    Round a version up at a given level.
-    """
+    """Round a version up at a given level."""
 
     level: Level
     version: LazyVersion
@@ -340,10 +317,11 @@ class CeilLazyVersion(LazyVersion):
 
 
 def ceil_ver(
-    level: AnyLevel, version: AnyVersion, keep_trailing_zeros: bool = False
+    level: AnyLevel,
+    version: AnyVersion,
+    keep_trailing_zeros: bool = False,
 ) -> LazyVersion:
-    """
-    Round a version up at a given level.
+    """Round a version up at a given level.
 
     In practice this means incrementing the value at the given level, and removing all following
     levels. For example::
@@ -361,9 +339,7 @@ def ceil_ver(
 
 @dataclass(order=True, frozen=True)
 class FloorLazyVersion(LazyVersion):
-    """
-    Round a version down at a given level.
-    """
+    """Round a version down at a given level."""
 
     level: Level
     version: LazyVersion
@@ -375,10 +351,11 @@ class FloorLazyVersion(LazyVersion):
 
 
 def floor_ver(
-    level: AnyLevel, version: AnyVersion, keep_trailing_zeros: bool = False
+    level: AnyLevel,
+    version: AnyVersion,
+    keep_trailing_zeros: bool = False,
 ) -> LazyVersion:
-    """
-    Round a version down at a given level.
+    """Round a version down at a given level.
 
     In practice this means removing all levels after the given one. For example::
 
@@ -431,8 +408,7 @@ def min_age(
     seconds: int = 0,
     allow_empty: bool = False,
 ) -> MinAgeLazyReleaseSet:
-    """
-    Get all releases that are older than a given age.
+    """Get all releases that are older than a given age.
 
     The age can be configured, either by setting the `age` parameter, or by setting one or more of
     `years`, `months`, `weeks`, `days`, `hours`, `minutes` or `seconds`.
@@ -495,8 +471,7 @@ def max_age(
     seconds: int = 0,
     allow_empty: bool = False,
 ) -> MaxAgeLazyReleaseSet:
-    """
-    Get all releases that are younger than a given age.
+    """Get all releases that are younger than a given age.
 
     The age can be configured, either by setting the `age` parameter, or by setting one or more of
     `years`, `months`, `weeks`, `days`, `hours`, `minutes` or `seconds`.
@@ -548,8 +523,7 @@ def count(
     n: int,
     release_set: AnyReleaseSet | None = None,
 ) -> LazyReleaseSet:
-    """
-    Get the most recent `n` releases at a certain level.
+    """Get the most recent `n` releases at a certain level.
 
     For example, to get the three most recent minor releases::
 
@@ -563,9 +537,7 @@ def count(
 
 @dataclass(order=True, frozen=True)
 class RequirementsLazyRequirementSet(LazyRequirementSet):
-    """
-    Get all the requirements of a release.
-    """
+    """Get all the requirements of a release."""
 
     distribution: str
     """
@@ -594,8 +566,7 @@ class RequirementsLazyRequirementSet(LazyRequirementSet):
 
 
 def requirements(release_set: AnyReleaseSet, distribution: str | None = None) -> LazyRequirementSet:
-    """
-    Returns the requirments of the given release.
+    """Returns the requirments of the given release.
 
     If the distribution cannot be derived from the `release` directly, you must set `distribution`.
     """
@@ -608,9 +579,7 @@ def requirements(release_set: AnyReleaseSet, distribution: str | None = None) ->
 
 @dataclass(order=True, frozen=True)
 class ConsistentLowerBoundsLazyRequirementSet(LazyRequirementSet):
-    """
-    Loosens lower bounds, to make them consistent.
-    """
+    """Loosens lower bounds, to make them consistent."""
 
     requirement_set: LazyRequirementSet
 
@@ -633,7 +602,7 @@ class ConsistentLowerBoundsLazyRequirementSet(LazyRequirementSet):
                             requirement,
                             specifier=SpecifierSet(f"<={b.lower}") & b.exclusions_specifier_set(),
                             marker=None,
-                        )
+                        ),
                     )
                 else:
                     result.append(requirement)
@@ -668,8 +637,7 @@ class ConsistentLowerBoundsLazyRequirementSet(LazyRequirementSet):
 
 
 def consistent_lower_bounds(requirement_set: AnyRequirementSet) -> LazyRequirementSet:
-    """
-    Loosens lower bounds, to make them consistent.
+    """Loosens lower bounds, to make them consistent.
 
     For example: Assume you depend on two distributions: foo and bar, with these releases:
 

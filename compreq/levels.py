@@ -6,8 +6,7 @@ from packaging.version import Version
 
 
 class Level(ABC):
-    """
-    Strategy for computing an index into a version tuple.
+    """Strategy for computing an index into a version tuple.
 
     For example for specyfing whether I want to refer to `1`, `2` or `4` in the version `1.2.4`.
 
@@ -32,8 +31,7 @@ class IntLevel(Level):
 
 @dataclass(order=True, frozen=True)
 class RelativeToFirstNonZeroLevel(Level):
-    """
-    A `Level` that picks an element relative to the first non-zero element in the version tuple.
+    """A `Level` that picks an element relative to the first non-zero element in the version tuple.
 
     For example::
 

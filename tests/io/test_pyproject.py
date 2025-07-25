@@ -23,6 +23,11 @@ dependencies = [
     "distmarker>=1.2.3; platform_system != 'Darwin' or platform_machine != 'arm64'",
 ]
 
+[project.optional-dependencies]
+test_extra = [
+    "dist-extra1<3.0.0,>=2.1.0",
+]
+
 [dependency-groups]
 dev = [
     "dist-dev1<2.0.0,>=1.2.3",
@@ -44,6 +49,11 @@ dependencies = [
     "distmarker>=1.2.3; platform_system != \\"Darwin\\" or platform_machine != \\"arm64\\"",
 ]
 
+[project.optional-dependencies]
+test_extra = [
+    "dist-extra1<3.0.0,>=2.1.0",
+]
+
 [dependency-groups]
 dev = [
     "dist-dev1<2.0.0,>=1.2.3",
@@ -58,13 +68,19 @@ MAIN_REQUIREMENTS = cr.get_requirement_set(
         "dist4~=1.2",
         "distextra[extra1, extra2]==1.2.3",
         "distmarker>=1.2.3; platform_system != 'Darwin' or platform_machine != 'arm64'",
-    ]
+    ],
+)
+
+EXTRA_REQUIREMENTS = cr.get_requirement_set(
+    [
+        "dist-extra1<3.0.0,>=2.1.0",
+    ],
 )
 
 DEV_REQUIREMENTS = cr.get_requirement_set(
     [
         "dist-dev1<2.0.0,>=1.2.3",
-    ]
+    ],
 )
 
 
@@ -73,8 +89,9 @@ def test_pyproject_file__get_requirements(tmp_path: Path) -> None:
     pyproject_path.write_text(PYPROJECT_CONTENTS)
 
     with cr.PyprojectFile.open(pyproject_path) as pyproject:
-        assert MAIN_REQUIREMENTS == pyproject.get_requirements()
-        assert DEV_REQUIREMENTS == pyproject.get_requirements("dev")
+        assert pyproject.get_requirements() == MAIN_REQUIREMENTS
+        assert pyproject.get_requirements(extra="test_extra") == EXTRA_REQUIREMENTS
+        assert pyproject.get_requirements(group="dev") == DEV_REQUIREMENTS
 
 
 def test_pyproject_file__set_requirements(tmp_path: Path) -> None:
@@ -88,25 +105,29 @@ requires-python = "<4,>=3.12"
 
 dependencies = []
 
+[project.optional-dependencies]
+test_extra = []
+
 [dependency-groups]
 dev = []
-"""
+""",
     )
 
     with cr.PyprojectFile.open(pyproject_path) as pyproject:
         compreq = MagicMock(cr.CompReq)
         compreq.context = MagicMock(cr.Context)
         compreq.resolve_requirement_set.side_effect = lambda r: asyncio.run(
-            cr.get_lazy_requirement_set(r).resolve(compreq.context)
+            cr.get_lazy_requirement_set(r).resolve(compreq.context),
         )
 
         pyproject.set_requirements(
             compreq,
             MAIN_REQUIREMENTS,
         )
-        pyproject.set_requirements(compreq, DEV_REQUIREMENTS, "dev")
+        pyproject.set_requirements(compreq, EXTRA_REQUIREMENTS, extra="test_extra")
+        pyproject.set_requirements(compreq, DEV_REQUIREMENTS, group="dev")
 
-    assert PYPROJECT_CONTENTS_AFTER == pyproject_path.read_text()
+    assert pyproject_path.read_text() == PYPROJECT_CONTENTS_AFTER
 
 
 def test_pyproject_file__get_requires_python(tmp_path: Path) -> None:
@@ -117,7 +138,7 @@ def test_pyproject_file__get_requires_python(tmp_path: Path) -> None:
 name = "compreq"
 version = "0.1.0"
 requires-python = "<4,>=3.12"
-"""
+""",
     )
 
     with cr.PyprojectFile.open(pyproject_path) as pyproject:
@@ -132,7 +153,7 @@ def test_pyproject_file__set_requires_python(tmp_path: Path) -> None:
 name = "compreq"
 version = "0.1.0"
 requires-python = "<4,>=3.12"
-"""
+""",
     )
 
     with cr.PyprojectFile.open(pyproject_path) as pyproject:
@@ -140,7 +161,8 @@ requires-python = "<4,>=3.12"
         compreq.context = MagicMock(cr.Context)
 
         def fake_resolve_specifier_set(
-            distribution: str, specifier_set: AnySpecifierSet
+            distribution: str,
+            specifier_set: AnySpecifierSet,
         ) -> SpecifierSet:
             assert distribution == "python"
             return asyncio.run(cr.get_lazy_specifier_set(specifier_set).resolve(compreq.context))
@@ -150,13 +172,13 @@ requires-python = "<4,>=3.12"
         pyproject.set_requires_python(compreq, "==3.10")
 
     assert (
-        """
+        pyproject_path.read_text()
+        == """
 [project]
 name = "compreq"
 version = "0.1.0"
 requires-python = "==3.10"
 """
-        == pyproject_path.read_text()
     )
 
 
@@ -172,11 +194,11 @@ classifiers = [
     "test2",
     "test3",
 ]
-"""
+""",
     )
 
     with cr.PyprojectFile.open(pyproject_path) as pyproject:
-        assert ["test1", "test2", "test3"] == pyproject.get_classifiers()
+        assert pyproject.get_classifiers() == ["test1", "test2", "test3"]
 
 
 def test_pyproject_file__set_classifiers(tmp_path: Path) -> None:
@@ -190,14 +212,15 @@ classifiers = [
     "chaff1",
     "chaff2",
 ]
-"""
+""",
     )
 
     with cr.PyprojectFile.open(pyproject_path) as pyproject:
         pyproject.set_classifiers(["test1", "test2", "test3"])
 
     assert (
-        """
+        pyproject_path.read_text()
+        == """
 [project]
 name = "compreq"
 version = "0.1.0"
@@ -207,7 +230,6 @@ classifiers = [
     "test3",
 ]
 """
-        == pyproject_path.read_text()
     )
 
 
@@ -226,7 +248,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
-"""
+""",
     )
 
     comp_req = MagicMock(cr.CompReq)
@@ -251,7 +273,8 @@ classifiers = [
         pyproject.set_python_classifiers(comp_req, lazy_python_releases)
 
     assert (
-        """
+        pyproject_path.read_text()
+        == """
 [project]
 name = "compreq"
 version = "0.1.0"
@@ -267,6 +290,5 @@ classifiers = [
     "Programming Language :: Python :: 3.1",
 ]
 """
-        == pyproject_path.read_text()
     )
     comp_req.resolve_release_set.assert_called_once_with("python", lazy_python_releases)

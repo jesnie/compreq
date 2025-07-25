@@ -11,10 +11,8 @@ from compreq.lazy import (
 )
 
 
-class VersionToken:
-    """
-    Factory for creating version specifiers. See: `compreq.lazy`.
-    """
+class VersionToken:  # noqa: PLW1641
+    """Factory for creating version specifiers. See: `compreq.lazy`."""
 
     def require(self, op: AnySpecifierOperator, version: AnyVersion) -> LazySpecifier:
         op = get_specifier_operator(op)

@@ -26,7 +26,7 @@ def fake_release(
     *,
     distribution: str = "foo.bar",
     version: str | Version = "1.2.3",
-    released_time: dt.datetime = dt.datetime(2023, 8, 11, 12, 49),
+    released_time: dt.datetime = dt.datetime(2023, 8, 11, 12, 49, tzinfo=dt.timezone.utc),
     successor: Release | None = None,
 ) -> Release:
     if isinstance(version, str):
@@ -102,9 +102,8 @@ class FakeReply:
 def make_fake_reply(content: str | bytes) -> FakeReply:
     if isinstance(content, str):
         return FakeReply(content, content.encode("utf-8"))
-    else:
-        assert isinstance(content, bytes)
-        return FakeReply(content.decode("utf-8"), content)
+    assert isinstance(content, bytes)
+    return FakeReply(content.decode("utf-8"), content)
 
 
 class FakeRequestsGet:
@@ -137,18 +136,17 @@ class FakeRequestsGet:
                 lines.append(
                     f'<a href="{name}">{name}</a>'
                     f"                                               {date_str}"
-                    f"                   {size_str}"
+                    f"                   {size_str}",
                 )
 
             lines.extend(
                 [
                     "</pre><hr></body>",
                     "</html>",
-                ]
+                ],
             )
 
             text = "\n".join(lines)
             return make_fake_reply(text)
-        else:
-            assert data.content is not None
-            return make_fake_reply(data.content)
+        assert data.content is not None
+        return make_fake_reply(data.content)
