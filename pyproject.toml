@@ -63,9 +63,11 @@ ignore = [
   "COM812",  # Not recommended with formatting
   "D",  # DocStrings
   "E501",  # Line too long
+  "E741",  # Ambiguous variable name: `l`
   "EM101",  # Exception must not use a string literal, assign to variable first
   "EM102",  # Exception must not use an f-string literal, assign to variable first
   "FBT",  # Boolean value in call
+  "FIX002",  # Line contains TODO, consider resolving the issue
   "PLR0912",  # Too many branches
   "PLR0913",  # Too many arguments in function definition (7 > 5)
   "PLR0915",  # Too many statements (62 > 50)
@@ -81,12 +83,15 @@ ignore = [
   "RET505",  # Unnecessary `else` after `return` statement
   "S101",  # Use of `assert` detected
   "S610",  # Use of Django `extra` can lead to SQL injection vulnerabilities
+  "SIM108",  # Use ternary operator `...` instead of `if`-`else`-block
   "SIM114",  # Combine `if` branches using logical `or` operator
   "SLF001",  # Private member accessed: `_path`
   "T201",  # `print` found
   "TC001",  # Move application import `compreq.contexts.DistributionContext` into a type-checking block
   "TC002",  # Move third-party import `packaging.version.Version` into a type-checking block
   "TC003",  # Move standard library import `collections.abc.Iterator` into a type-checking block
+  "TD002",  # Missing author in TODO
+  "TD003",  # Missing issue link for this TODO
   "TRY003",  # Avoid specifying long messages outside the exception class
   "TRY301",  # Abstract `raise` to an inner functio
   "UP015",  # Unnecessary modes
